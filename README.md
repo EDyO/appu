@@ -13,6 +13,7 @@ REQUIREMENTS
 * pydub
     ```
     apt-get install python-pip -y
+
     pip install pydub
     ```
 * ffmpeg
