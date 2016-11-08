@@ -1,7 +1,7 @@
 language: python
 python:
   - "2.7"
-sudo: false
+sudo: required
 before_script:
   - export PATH="$HOME/node_modules/.bin:$PATH"
   - pip install -r requirements.txt
