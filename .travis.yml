@@ -17,4 +17,5 @@ script:
 #  - echo "www.entredevyops.es" > CNAME
   - git add .
   - git commit -am "Generating podcast..."
-  - git push "https://${GH_TOKEN}@github.com/dacacioa/AAE.git" master -f >/dev/null 2>&1
+#  - git push "https://${GH_TOKEN}@github.com/dacacioa/AAE.git" master -f >/dev/null 2>&1
+  - git push "https://github.com/dacacioa/AAE.git" master -f >/dev/null 2>&1
