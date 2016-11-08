@@ -27,6 +27,6 @@ print "Generating final podcast file: opening + podcast + ending"
 
 final = opening.append(podcast, crossfade=1000)
 final = final.append(ending,  crossfade=4000)
-final.export(configParser.get('files-config','final_file'), format="mp3", parameters=["-ac", "1", "-ab", "48k"])
+final.export(configParser.get('files-config','final_file'), format="mp3", parameters=["-codec:a", "libmp3lame", "-ac", "1", "-ab", "48k"])
 
 print "Done"
