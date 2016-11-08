@@ -1,0 +1,19 @@
+language: python
+python:
+  - "2.7"
+sudo: false
+before_script:
+  - export PATH="$HOME/node_modules/.bin:$PATH"
+  - pip install -r requirements.txt
+script:
+  - git config --global user.email "travis@edyo.es"
+  - git config --global user.name "Travis for EDyO"
+  - git checkout --orphan AAE
+  - python ./work_podcast.py
+#  - git rm -r --cached pages themes posts plugins files conf.py README.md pages requirements.txt
+#  - rm -rf .doit.db.db cache/ node_modules/ conf.pyc
+#  - cp -R output/* .
+#  - echo "www.entredevyops.es" > CNAME
+  - git add .
+  - git commit -am "Generating podcast..."
+  - git push "https://${GH_TOKEN}@github.com/dacacioa/AAE.git" master -f >/dev/null 2>&1
