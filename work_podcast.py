@@ -1,11 +1,16 @@
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
+import ConfigParser
+
+configParser = ConfigParser.RawConfigParser()
+configFilePath = r'./files.cfg'
+configParser.read(configFilePath)
 
 print "Importing podcast"
-podcast = AudioSegment.from_mp3("/home/mitch/AAE/podcast.mp3")
+podcast = AudioSegment.from_mp3(configParser.get('files-config','podcast_file'))
 
 print "Importing music"
-song =  AudioSegment.from_mp3("/home/mitch/AAE/intro.mp3")
+song =  AudioSegment.from_mp3(configParser.get('files-config','song_file'))
 
 print "Generating opening music"
 opening = song[:20000]
@@ -22,6 +27,6 @@ print "Generating final podcast file: opening + podcast + ending"
 
 final = opening.append(podcast, crossfade=1000)
 final = final.append(ending,  crossfade=4000)
-final.export("EDyO-19.mp3", format="mp3", parameters=["-ac", "1", "-ab", "48k"])
+final.export(configParser.get('files-config','final_file'), format="mp3", parameters=["-ac", "1", "-ab", "48k"])
 
 print "Done"
