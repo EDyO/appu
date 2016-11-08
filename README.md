@@ -12,13 +12,13 @@ REQUIREMENTS
 
 * pydub
     ```
-    apt-get install python-pip -y
+    apt-get install -y python-pip
 
     pip install pydub
     ```
 * ffmpeg
   ```
 
-  apt-get install ffmpeg -y
+  apt-get install -y ffmpeg libmp3lame
 
   ```
