@@ -5,7 +5,7 @@ sudo: false
 before_script:
   - export PATH="$HOME/node_modules/.bin:$PATH"
   - pip install -r requirements.txt
-  - sudo apt-get install ffmpeg -y
+  - sudo apt-get install -y ffmpeg
 script:
   - git config --global user.email "travis@edyo.es"
   - git config --global user.name "Travis for EDyO"
