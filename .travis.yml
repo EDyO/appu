@@ -15,7 +15,6 @@ script:
 #  - rm -rf .doit.db.db cache/ node_modules/ conf.pyc
 #  - cp -R output/* .
 #  - echo "www.entredevyops.es" > CNAME
-  - cd podcast
   - git add .
   - git commit -am "Pushing podcast from travis..."
 #  - git push "https://${GH_TOKEN}@github.com/dacacioa/AAE.git" master -f >/dev/null 2>&1
