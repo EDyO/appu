@@ -9,7 +9,7 @@ before_script:
 script:
   - git config --global user.email "travis@edyo.es"
   - git config --global user.name "Travis for EDyO"
-  - git checkout --orphan AAE
+#  - git checkout --orphan AAE
   - python ./work_podcast.py
 #  - git rm -r --cached pages themes posts plugins files conf.py README.md pages requirements.txt
 #  - rm -rf .doit.db.db cache/ node_modules/ conf.pyc
