@@ -3,7 +3,7 @@ from pydub.silence import split_on_silence
 import ConfigParser
 
 configParser = ConfigParser.RawConfigParser()
-configFilePath = r'./files.cfg'
+configFilePath = r'./config.cfg'
 configParser.read(configFilePath)
 
 print "Importing podcast"
