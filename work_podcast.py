@@ -6,6 +6,13 @@ configParser = ConfigParser.RawConfigParser()
 configFilePath = r'./config.cfg'
 configParser.read(configFilePath)
 
+#Read mp3 from mp3 file
+tags={
+    'artist': configParser.get('tag-config','artist'),
+    'album': configParser.get('tag-config','album'),
+    'comments': configParser.get('tag-config','comments')
+}
+
 print "Importing podcast"
 podcast = AudioSegment.from_mp3(configParser.get('files-config','podcast_file'))
 
