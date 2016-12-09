@@ -1,13 +1,18 @@
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
 import ConfigParser
+import logging
+
+l = logging.getLogger("pydub.converter")
+l.setLevel(logging.DEBUG)
+l.addHandler(logging.StreamHandler())
 
 configParser = ConfigParser.RawConfigParser()
 configFilePath = r'./config.cfg'
 configParser.read(configFilePath)
 
 #Read mp3 from mp3 file
-tags={
+mp3_tags={
     'artist': configParser.get('tag-config','artist'),
     'album': configParser.get('tag-config','album'),
     'comments': configParser.get('tag-config','comments')
@@ -37,8 +42,6 @@ final = final.append(ending,  crossfade=4000)
 #final.export(configParser.get('files-config','final_file'), format="mp3", tags={'artist': configParser.get('tag-config','artist'), 'album': configParser.get('tag-config','album'), 'comments': configParser.get('tag-config','comments')}, parameters=["-codec:a", "libmp3lame", "-ac", "1", "-ab", "48k"])
 
 
-print  configParser.get('tag-config','artist')
-
-final.export(configParser.get('files-config','final_file'), format="mp3", parameters=["-ac", "1", "-ab", "48k"])
+final.export(configParser.get('files-config','final_file'), format="mp3", tags=mp3_tags, bitrate='48', parameters=["-ac", "1"], cover="files/homer.png")
 
 print "Done"
