@@ -47,6 +47,5 @@ final.export(configParser.get('files-config','final_file'), format="mp3", tags=m
 print  configParser.get('tag-config','comment')
 
 #final.export(configParser.get('files-config','final_file'), format="mp3", parameters=["-ac", "1", "-ab", "48k"])
->>>>>>> Tags
 
 print "Done"
