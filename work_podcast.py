@@ -1,10 +1,32 @@
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
 import ConfigParser
+import logging
+import sys
+
+#Debug mode with param -debug
+
+if str(sys.argv[1])=="-debug":
+    l = logging.getLogger("pydub.converter")
+    l.setLevel(logging.DEBUG)
+    l.addHandler(logging.StreamHandler())
+
+ #read config file
 
 configParser = ConfigParser.RawConfigParser()
 configFilePath = r'./config.cfg'
 configParser.read(configFilePath)
+
+#Read mp3 tags from config file
+mp3_tags={
+    'title': configParser.get('tag-config','title'),
+    'artist': configParser.get('tag-config','artist'),
+    'album': configParser.get('tag-config','album'),
+    'track': configParser.get('tag-config','track'),
+    'comment': configParser.get('tag-config','comment'),
+}
+
+cover_file=configParser.get('files-config','cover_file')
 
 print "Importing podcast"
 podcast = AudioSegment.from_mp3(configParser.get('files-config','podcast_file'))
@@ -27,11 +49,7 @@ print "Generating final podcast file: opening + podcast + ending"
 
 final = opening.append(podcast, crossfade=1000)
 final = final.append(ending,  crossfade=4000)
-#final.export(configParser.get('files-config','final_file'), format="mp3", tags={'artist': configParser.get('tag-config','artist'), 'album': configParser.get('tag-config','album'), 'comments': configParser.get('tag-config','comments')}, parameters=["-codec:a", "libmp3lame", "-ac", "1", "-ab", "48k"])
 
+final.export(configParser.get('files-config','final_file'), format="mp3", tags=mp3_tags, bitrate='48000', parameters=["-ac", "1"], id3v2_version='3', cover=cover_file)
 
-print  configParser.get('tag-config','artist')
-
-final.export(configParser.get('files-config','final_file'), format="mp3", parameters=["-ac", "1", "-ab", "48k"])
-
-print "Done"
+print "Done! File %s generated correctly" %configParser.get('files-config','final_file')
