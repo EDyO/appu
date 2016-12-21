@@ -13,9 +13,11 @@ configParser.read(configFilePath)
 
 #Read mp3 from mp3 file
 mp3_tags={
+    'title': configParser.get('tag-config','title'),
     'artist': configParser.get('tag-config','artist'),
     'album': configParser.get('tag-config','album'),
-    'comments': configParser.get('tag-config','comments')
+    'track': configParser.get('tag-config','track'),
+    'comment': configParser.get('tag-config','comment'),
 }
 
 print "Importing podcast"
@@ -39,9 +41,12 @@ print "Generating final podcast file: opening + podcast + ending"
 
 final = opening.append(podcast, crossfade=1000)
 final = final.append(ending,  crossfade=4000)
-#final.export(configParser.get('files-config','final_file'), format="mp3", tags={'artist': configParser.get('tag-config','artist'), 'album': configParser.get('tag-config','album'), 'comments': configParser.get('tag-config','comments')}, parameters=["-codec:a", "libmp3lame", "-ac", "1", "-ab", "48k"])
 
+final.export(configParser.get('files-config','final_file'), format="mp3", tags=mp3_tags, bitrate='48000', parameters=["-ac", "1"], cover="files/homer.png")
 
-final.export(configParser.get('files-config','final_file'), format="mp3", tags=mp3_tags, bitrate='48', parameters=["-ac", "1"], cover="files/homer.png")
+print  configParser.get('tag-config','comment')
+
+#final.export(configParser.get('files-config','final_file'), format="mp3", parameters=["-ac", "1", "-ab", "48k"])
+>>>>>>> Tags
 
 print "Done"
