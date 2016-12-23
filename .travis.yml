@@ -6,7 +6,10 @@ before_script:
   - export PATH="$HOME/node_modules/.bin:$PATH"
 #  - pip install -r requirements.txt
 #  - sudo apt-get install -y libmp3lame0 libavcodec-extra-53 libpng-dev zlib1g-dev ffmpeg
-  - sudo apt-get install -y libmp3lame0 libavcodec-extra-53 zlibc libfaac-dev libsdl1.2-dev libx11-dev libxfixes-dev libxvidcore4-dev zlib1g-dev ffmpeg
+
+  - sudo apt-get update
+  - sudo apt-get upgrade
+  - sudo apt-get install -y libmp3lame0 libavcodec-extra-53 zlibc libfaac-dev libsdl1.2-dev libx11-dev libxfixes-dev zlib1g-dev ffmpeg
 script:
   - git config --global user.email "travis@edyo.es"
   - git config --global user.name "Travis for EDyO"
