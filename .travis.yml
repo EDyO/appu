@@ -14,7 +14,7 @@ script:
   - ln -s ../pydub/pydub/ pydub
   - python ./work_podcast.py
 #  - git rm -r --cached pages themes posts plugins files conf.py README.md pages requirements.txt
-#  - rm -rf .doit.db.db cache/ node_modules/ conf.pyc
+#  - rm -rf .doit.db.db cache/ node_modules/ conf.pyc 
 #  - cp -R output/* .
 #  - echo "www.entredevyops.es" > CNAME
   - git add -A
