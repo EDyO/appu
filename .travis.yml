@@ -14,7 +14,7 @@ script:
   - ln -s ../pydub/pydub/ pydub
   - git branch -d travis_build
   - git checkout -b travis_build
-  - python ./aae.py
+  - python ./aae.py -debug
 #  - git rm -r --cached pages themes posts plugins files conf.py README.md pages requirements.txt
 #  - rm -rf .doit.db.db cache/ node_modules/ conf.pyc
 #  - cp -R output/* .
