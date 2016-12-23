@@ -10,6 +10,8 @@ script:
   - git config --global user.email "travis@edyo.es"
   - git config --global user.name "Travis for EDyO"
 #  - git checkout --orphan AAE
+  - git clone https://github.com/dacacioa/pydub.git ../pydub
+  - ln -s ../pydub/pydub/ pydub
   - python ./work_podcast.py
 #  - git rm -r --cached pages themes posts plugins files conf.py README.md pages requirements.txt
 #  - rm -rf .doit.db.db cache/ node_modules/ conf.pyc
@@ -18,4 +20,4 @@ script:
   - git add -A
   - git commit -am "Pushing podcast from travis..."
 #  - git push "https://${GH_TOKEN}@github.com/dacacioa/AAE.git" master -f >/dev/null 2>&1
-  - git push "https://${GH_TOKEN}@github.com/dacacioa/AAE.git" master
+  - git push "https://${GH_TOKEN}@github.com/dacacioa/AAE.git" travis_build
