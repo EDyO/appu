@@ -10,7 +10,7 @@ before_script:
 #  - sudo apt-get install -y libmp3lame0 libavcodec-extra-53 libpng-dev zlib1g-dev ffmpeg
 
 #  - sudo apt-get install -y libmp3lame0 libavcodec-extra-53 zlibc libfaac-dev libsdl1.2-dev libx11-dev libxfixes-dev zlib1g-dev ffmpeg
-  - sudo apt-get install libav-tools libav
+  - sudo apt-get install libav-tools 
 script:
   - git config --global user.email "travis@edyo.es"
   - git config --global user.name "Travis for EDyO"
