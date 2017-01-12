@@ -6,10 +6,6 @@ python:
 sudo: required
 before_script:
   - export PATH="$HOME/node_modules/.bin:$PATH"
-#  - pip install -r requirements.txt
-#  - sudo apt-get install -y libmp3lame0 libavcodec-extra-53 libpng-dev zlib1g-dev ffmpeg
-
-#  - sudo apt-get install -y libmp3lame0 libavcodec-extra-53 zlibc libfaac-dev libsdl1.2-dev libx11-dev libxfixes-dev zlib1g-dev ffmpeg
   - sudo apt-get install libav-tools 
 script:
   - git config --global user.email "travis@edyo.es"
@@ -17,9 +13,7 @@ script:
 #  - git checkout --orphan AAE
   - git clone https://github.com/dacacioa/pydub.git ../pydub
   - ln -s ../pydub/pydub/ pydub
-  - git branch -d travis_build
   - git checkout -b travis_build
-  - ffmpeg -i
   - python ./aae.py -debug
 #  - git rm -r --cached pages themes posts plugins files conf.py README.md pages requirements.txt
 #  - rm -rf .doit.db.db cache/ node_modules/ conf.pyc
