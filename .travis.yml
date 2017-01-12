@@ -12,7 +12,8 @@ script:
   - git config --global user.name "Travis for EDyO"
   - git clone https://github.com/dacacioa/pydub.git ../pydub
   - ln -s ../pydub/pydub/ pydub
-  - python ./aae.py -debug
+  - git checkout master
+  - python ./aae.py 
   - git add -A
   - git commit -am "Pushing podcast from travis..."
   - git push "https://${GH_TOKEN}@github.com/dacacioa/AAE.git" -f
