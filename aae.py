@@ -33,7 +33,7 @@ print "Importing podcast"
 
 if cover.lower().endswith('.mp3'):
     podcast = AudioSegment.from_mp3(configParser.get('files-config','podcast_file'))
-else
+else:
     sys.exit('Incorrect audio file format. The file must have .mp3 extension')
 
 
