@@ -14,7 +14,7 @@ script:
 #  - git clone https://github.com/dacacioa/pydub.git ../pydub
 #  - ln -s ../pydub/pydub/ pydub
 
-  - git -b checkout travis_ci
+  - git checkout -b travis_ci
   - python ./aae.py
   - git add -A
   - git commit -am "Pushing podcast from travis..."
