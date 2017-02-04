@@ -6,14 +6,17 @@ python:
 sudo: required
 before_script:
   - export PATH="$HOME/node_modules/.bin:$PATH"
-  - sudo apt-get install libav-tools 
+  - sudo apt-get install libav-tools
+  - pip install pydub
 script:
   - git config --global user.email "travis@edyo.es"
   - git config --global user.name "Travis for EDyO"
-  - git clone https://github.com/dacacioa/pydub.git ../pydub
-  - ln -s ../pydub/pydub/ pydub
+
+#  - git clone https://github.com/dacacioa/pydub.git ../pydub
+#  - ln -s ../pydub/pydub/ pydub
+
   - git checkout master
-  - python ./aae.py 
+  - python ./aae.py
   - rm -f pydub
   - git add -A
   - git commit -am "Pushing podcast from travis..."
