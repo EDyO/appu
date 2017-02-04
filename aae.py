@@ -29,7 +29,12 @@ mp3_tags={
 cover_file=configParser.get('files-config','cover_file')
 
 print "Importing podcast"
-podcast = AudioSegment.from_mp3(configParser.get('files-config','podcast_file'))
+
+if cover.lower().endswith('.mp3'):
+    podcast = AudioSegment.from_mp3(configParser.get('files-config','podcast_file'))
+else
+    sys.exit('Incorrect audio file format. The file must have .mp3 extension')
+
 
 print "Importing music"
 song =  AudioSegment.from_mp3(configParser.get('files-config','song_file'))
