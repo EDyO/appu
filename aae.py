@@ -28,6 +28,7 @@ mp3_tags={
 
 cover_file=configParser.get('files-config','cover_file')
 
+
 print "Importing podcast"
 
 if cover.lower().endswith('.mp3'):
