@@ -31,8 +31,10 @@ cover_file=configParser.get('files-config','cover_file')
 
 print "Importing podcast"
 
-if cover.lower().endswith('.mp3'):
-    podcast = AudioSegment.from_mp3(configParser.get('files-config','podcast_file'))
+audio_file = configParser.get('files-config','podcast_file')
+
+if audio_file.lower().endswith('.mp3'):
+    podcast = AudioSegment.from_mp3(audio_file)
 else:
     sys.exit('Incorrect audio file format. The file must have .mp3 extension')
 
