@@ -1,7 +1,7 @@
-# AAE
-Auto Audio Editor
+# APPU
+**A**utomatic **P**odcast **Pu**blisher
 
-Python tool used to automate the EDyO podcast audio edition.
+Python tool used to automate the [EDyO](http://www.entredevyops.es) podcast publication.
 
 How it works
 ------------
