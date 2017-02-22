@@ -51,7 +51,7 @@ ending = song[-40000:]
 
 print "Normalizing podcast audio"
 #podcast = podcast.normalize()
-#podcast = split_on_silence(podcast) <-- TODO
+#podcast = split_on_silence(podcast) <-- TODO 
 
 print "Generating final podcast file: opening + podcast + ending"
 
