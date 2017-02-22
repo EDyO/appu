@@ -15,7 +15,7 @@ script:
 #  - ln -s ../pydub/pydub/ pydub
 
   - git checkout -b travis_ci
-  - python ./aae.py
+  - python ./appu.py
   - git status
   - git add -A
   - git status 
