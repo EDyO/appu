@@ -8,7 +8,7 @@ How it works
 
 * Clone the git repo
 
-> ``` git clone https://github.com/dacacioa/AAE.git ```
+> ``` git clone https://github.com/dacacioa/appu.git ```
 
 * Put in the folder files:
 
@@ -16,7 +16,7 @@ How it works
   * The intro/ending music.
   * The podcast's cover image.
 
-** IMPORTANT: the files must be in mp3 format.**
+** IMPORTANT: the files must be in mp3 format. **
 
 * Modify config.cfg file setting:
 
@@ -29,9 +29,10 @@ How it works
 
   * [tag-config] section is the id3 metadata to add to the file. You have to set it without simple/double quotation marks.
 
+* Check if exist a travis-ci branch in github. If exist merge it with master or delete it.
 * Finally, you have to push into Github master repo branch.
 
-> ``` git push https://github.com/dacacioa/AAE.git origing/master ```
+> ``` git push https://github.com/dacacioa/appu.git origing/master ```
 
 Then Travis CI will take the repo and will generate a new branch (travis-ci) with the final file set in the final_file param.
 You will can download it directly from Github.
