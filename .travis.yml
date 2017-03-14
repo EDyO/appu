@@ -18,6 +18,6 @@ script:
   - python ./appu.py
   - git status
   - git add -A
-  - git status 
+  - git status
   - git commit -am "Pushing podcast from travis..."
-  - git push "https://${GH_TOKEN}@github.com/dacacioa/AAE.git" -f
+  - git push "https://${GH_TOKEN}@github.com:dacacioa/appu.git" -f
