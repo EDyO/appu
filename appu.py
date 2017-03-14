@@ -58,9 +58,11 @@ print "Generating final podcast file: opening + podcast + ending"
 final = opening.append(podcast, crossfade=1000)
 final = final.append(ending,  crossfade=4000)
 
-print "Exporting final file"
+print "Normalizing audio"
 
 final = final.normalize()
+
+print "Exporting final file"
 
 final.export(configParser.get('files-config','final_file'), format="mp3", tags=mp3_tags, bitrate='48000', parameters=["-ac", "1"], id3v2_version='3', cover=cover_file)
 
