@@ -1,5 +1,5 @@
 os: linux
-dist: xenial
+dist: Trusty
 language: python
 python:
   - "2.7"
@@ -11,7 +11,7 @@ before_script:
 branches:
   only:
   - master
-  
+
 script:
   - git config --global user.email "travis@edyo.es"
   - git config --global user.name "Travis for EDyO"
