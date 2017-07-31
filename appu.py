@@ -53,7 +53,7 @@ ending = song[-40000:]
 
 print "Normalizing podcast audio"
 
-final = final.normalize()
+podcast = podcast.normalize()
 
 print "Generating final podcast file: opening + podcast + ending"
 
