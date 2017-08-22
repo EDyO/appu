@@ -25,4 +25,4 @@ script:
   - git add -A
   - git status
   - git commit -am "Pushing podcast from travis..."
-  - git push "https://${GH_TOKEN}@github.com/dacacioa/appu.git" -f
+  - git push "https://${GH_TOKEN}@github.com/EDyO/appu.git" -f
