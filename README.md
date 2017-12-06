@@ -1,7 +1,7 @@
 # APPU
 **A**utomatic **P**odcast **Pu**blisher
 
-Python tool used to automate the [EDyO](http://www.entredevyops.es) podcast publication. 
+Python tool used to automate the [EDyO](http://www.entredevyops.es) podcast publication.
 
 How it works
 ------------
