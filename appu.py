@@ -30,10 +30,19 @@ def load_mp3(mp3_file_name):
     return audio
 
 def get_jingles(song_file_name):
+    """
+    This function returns both starting and ending
+    jingles.
+    """
     song = load_mp3(song_file_name)
     return song[:20000], song[40000:]
 
 def glue_tracks(tracks):
+    """
+    This functions glues all tracks in a single one,
+    using the specified fade for each track, and
+    returns the resulting audio.
+    """
     final = tracks[0][0]
     for audio, fade in tracks[1:]:
         final = final.append(audio, crossfade=fade)
