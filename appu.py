@@ -4,31 +4,19 @@ import ConfigParser
 import logging
 import sys
 
-# Using logger instead of print
-l = logging.getLogger("pydub.converter")
-l.addHandler(logging.StreamHandler())
+def parse_args():
+    """Debug mode with param -debug"""
+    if "-debug" in sys.argv :
+        l.setLevel(logging.DEBUG)
 
-# Debug mode with param -debug
-if len(sys.argv) > 1 and str(sys.argv[1]) == "-debug" :
-    l.setLevel(logging.DEBUG)
-
-# read config file
-configParser = ConfigParser.RawConfigParser()
-configFilePath = r'./config.cfg'
-configParser.read(configFilePath)
-# Declares config parameters as variables
-for section in configParser.sections():
-    for name, value in configParser.items(section):
-        globals()[name] = value
-
-# Read mp3 tags from config file
-mp3_tags={
-    'title': title,
-    'artist': artist,
-    'album': album,
-    'track': track,
-    'comment': comment,
-}
+def parse_config():
+    """Read config file and loads parameters as variables"""
+    configParser = ConfigParser.RawConfigParser()
+    configFilePath = r'./config.cfg'
+    configParser.read(configFilePath)
+    for section in configParser.sections():
+        for name, value in configParser.items(section):
+            globals()[name] = value
 
 def load_mp3(mp3_file_name):
     """
@@ -40,6 +28,22 @@ def load_mp3(mp3_file_name):
     else:
         sys.exit('Incorrect audio file format. The file must have .mp3 extension')
     return audio
+
+# Using logger instead of print
+l = logging.getLogger("pydub.converter")
+l.addHandler(logging.StreamHandler())
+
+parse_args()
+parse_config()
+
+# Read mp3 tags from config file
+mp3_tags={
+    'title': title,
+    'artist': artist,
+    'album': album,
+    'track': track,
+    'comment': comment,
+}
 
 l.info("Importing podcast")
 podcast = load_mp3(podcast_file)
