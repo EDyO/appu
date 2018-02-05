@@ -29,6 +29,10 @@ def load_mp3(mp3_file_name):
         sys.exit('Incorrect audio file format. The file must have .mp3 extension')
     return audio
 
+def get_jingles(song_file_name):
+    song = load_mp3(song_file_name)
+    return song[:20000], song[40000:]
+
 # Using logger instead of print
 l = logging.getLogger("pydub.converter")
 l.addHandler(logging.StreamHandler())
@@ -48,14 +52,8 @@ mp3_tags={
 l.info("Importing podcast")
 podcast = load_mp3(podcast_file)
 
-l.info("Importing music")
-song =  load_mp3(song_file)
-
-l.info("Generating opening music")
-opening = song[:20000]
-
-l.info("Generating final music")
-ending = song[-40000:]
+l.info("Generating jingles")
+opening, ending = get_jingles(song_file)
 
 #podcast = split_on_silence(podcast) <-- TODO
 
