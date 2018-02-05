@@ -25,7 +25,9 @@ def load_mp3(mp3_file_name):
     if mp3_file_name.lower().endswith('.mp3'):
         audio = AudioSegment.from_mp3(mp3_file_name)
     else:
-        sys.exit('Incorrect audio file format. The file must have .mp3 extension')
+        raise SystemExit(
+            'Incorrect audio file format. The file must have .mp3 extension'
+        )
     return audio
 
 def get_jingles(song_file_name):
