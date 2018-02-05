@@ -4,20 +4,20 @@ import ConfigParser
 import logging
 import sys
 
-#Debug mode with param -debug
+# Using logger instead of print
+l = logging.getLogger("pydub.converter")
+l.addHandler(logging.StreamHandler())
 
+# Debug mode with param -debug
 if len(sys.argv) > 1 and str(sys.argv[1]) == "-debug" :
-    l = logging.getLogger("pydub.converter")
     l.setLevel(logging.DEBUG)
-    l.addHandler(logging.StreamHandler())
 
- #read config file
-
+# read config file
 configParser = ConfigParser.RawConfigParser()
 configFilePath = r'./config.cfg'
 configParser.read(configFilePath)
 
-#Read mp3 tags from config file
+# Read mp3 tags from config file
 mp3_tags={
     'title': configParser.get('tag-config','title'),
     'artist': configParser.get('tag-config','artist'),
@@ -28,8 +28,7 @@ mp3_tags={
 
 cover_file=configParser.get('files-config','cover_file')
 
-
-print "Importing podcast"
+l.info("Importing podcast")
 
 audio_file = configParser.get('files-config','podcast_file')
 
@@ -39,29 +38,28 @@ else:
     sys.exit('Incorrect audio file format. The file must have .mp3 extension')
 
 
-print "Importing music"
+l.info("Importing music")
 song =  AudioSegment.from_mp3(configParser.get('files-config','song_file'))
 
-print "Generating opening music"
+l.info("Generating opening music")
 opening = song[:20000]
 
-
-print "Generating final music"
+l.info("Generating final music")
 ending = song[-40000:]
 
 #podcast = split_on_silence(podcast) <-- TODO
 
-print "Normalizing podcast audio"
+l.info("Normalizing podcast audio")
 
 podcast = podcast.normalize()
 
-print "Generating final podcast file: opening + podcast + ending"
+l.info("Generating final podcast file: opening + podcast + ending")
 
 final = opening.append(podcast, crossfade=1000)
 final = final.append(ending,  crossfade=4000)
 
-print "Exporting final file"
+l.info("Exporting final file")
 
 final.export(configParser.get('files-config','final_file'), format="mp3", tags=mp3_tags, bitrate='48000', parameters=["-ac", "1"], id3v2_version='3', cover=cover_file)
 
-print "Done! File %s generated correctly" %configParser.get('files-config','final_file')
+l.info("Done! File %s generated correctly".format(configParser.get('files-config','final_file')))
