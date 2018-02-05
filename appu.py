@@ -33,6 +33,12 @@ def get_jingles(song_file_name):
     song = load_mp3(song_file_name)
     return song[:20000], song[40000:]
 
+def glue_tracks(tracks):
+    final = tracks[0][0]
+    for audio, fade in tracks[1:]:
+        final = final.append(audio, crossfade=fade)
+    return final
+
 # Using logger instead of print
 l = logging.getLogger("pydub.converter")
 l.addHandler(logging.StreamHandler())
@@ -63,8 +69,7 @@ podcast = podcast.normalize()
 
 l.info("Generating final podcast file: opening + podcast + ending")
 
-final = opening.append(podcast, crossfade=1000)
-final = final.append(ending,  crossfade=4000)
+final = glue_tracks([(opening, 0), (podcast, 1000), (ending, 4000)])
 
 l.info("Exporting final file")
 
