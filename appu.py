@@ -73,15 +73,20 @@ opening, ending = get_jingles(song_file)
 #podcast = split_on_silence(podcast) <-- TODO
 
 l.info("Normalizing podcast audio")
-
 podcast = podcast.normalize()
 
 l.info("Generating final podcast file: opening + podcast + ending")
-
 final = glue_tracks([(opening, 0), (podcast, 1000), (ending, 4000)])
 
 l.info("Exporting final file")
-
-final.export(final_file, format="mp3", tags=mp3_tags, bitrate='48000', parameters=["-ac", "1"], id3v2_version='3', cover=cover_file)
+final.export(
+    final_file,
+    format="mp3",
+    tags=mp3_tags,
+    bitrate='48000',
+    parameters=["-ac", "1"],
+    id3v2_version='3',
+    cover=cover_file,
+)
 
 l.info("Done! File {} generated correctly".format(final_file))
