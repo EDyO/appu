@@ -30,20 +30,22 @@ mp3_tags={
     'comment': comment,
 }
 
-cover_file=cover_file
+def load_mp3(mp3_file_name):
+    """
+    This tries to load the audio from a named mp3 file.
+    It checks the filename has mp3 extension.
+    """
+    if mp3_file_name.lower().endswith('.mp3'):
+        audio = AudioSegment.from_mp3(mp3_file_name)
+    else:
+        sys.exit('Incorrect audio file format. The file must have .mp3 extension')
+    return audio
 
 l.info("Importing podcast")
-
-audio_file = podcast_file
-
-if audio_file.lower().endswith('.mp3'):
-    podcast = AudioSegment.from_mp3(audio_file)
-else:
-    sys.exit('Incorrect audio file format. The file must have .mp3 extension')
-
+podcast = load_mp3(podcast_file)
 
 l.info("Importing music")
-song =  AudioSegment.from_mp3(song_file)
+song =  load_mp3(song_file)
 
 l.info("Generating opening music")
 opening = song[:20000]
