@@ -1,5 +1,4 @@
 from pydub import AudioSegment
-from pydub.silence import split_on_silence
 import ConfigParser
 import logging
 import sys
@@ -69,8 +68,6 @@ podcast = load_mp3(podcast_file)
 
 l.info("Generating jingles")
 opening, ending = get_jingles(song_file)
-
-#podcast = split_on_silence(podcast) <-- TODO
 
 l.info("Normalizing podcast audio")
 podcast = podcast.normalize()
