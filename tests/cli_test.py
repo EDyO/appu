@@ -2,8 +2,6 @@ import ConfigParser
 import logging
 import sys
 
-import pytest
-
 from cli import get_logger, parse_config
 
 def test_get_logger():
