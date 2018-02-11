@@ -4,20 +4,23 @@ import sys
 
 from cli import get_logger, parse_config
 
+
 def test_get_logger():
-    l = get_logger()
-    assert isinstance(l, logging.Logger)
+    logger = get_logger()
+    assert isinstance(logger, logging.Logger)
     handlerClasses = []
-    for handler in l.handlers:
+    for handler in logger.handlers:
         handlerClasses.append(handler.__class__)
     assert logging.StreamHandler in handlerClasses
-    assert l.level == logging.INFO
+    assert logger.level == logging.INFO
+
 
 def test_get_logger_debug(monkeypatch):
     testargs = ["appu", "-debug"]
     monkeypatch.setattr(sys, 'argv', testargs)
-    l = get_logger()
-    assert l.level == logging.DEBUG
+    logger = get_logger()
+    assert logger.level == logging.DEBUG
+
 
 class MockRawConfigParser(object):
     _params = {
@@ -45,6 +48,7 @@ class MockRawConfigParser(object):
 
     def read(self, config_file):
         pass
+
 
 def test_parse_config(monkeypatch):
     monkeypatch.setattr(ConfigParser, "RawConfigParser", MockRawConfigParser)

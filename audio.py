@@ -1,5 +1,6 @@
 from pydub import AudioSegment
 
+
 def load_mp3(mp3_file_name):
     """
     This tries to load the audio from a named mp3 file.
@@ -13,6 +14,7 @@ def load_mp3(mp3_file_name):
         )
     return audio
 
+
 def get_jingles(song_file_name):
     """
     This function returns both starting and ending
@@ -20,6 +22,7 @@ def get_jingles(song_file_name):
     """
     song = load_mp3(song_file_name)
     return song[:20000], song[40000:]
+
 
 def glue_tracks(tracks):
     """
