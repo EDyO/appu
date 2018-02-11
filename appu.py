@@ -1,12 +1,7 @@
-import logging
-from cli import parse_args, parse_config
+from cli import get_logger, parse_config
 from audio import load_mp3, get_jingles, glue_tracks
 
-# Using logger instead of print
-l = logging.getLogger("pydub.converter")
-l.addHandler(logging.StreamHandler())
-
-parse_args()
+l = get_logger()
 cfg = parse_config()
 
 # Read mp3 tags from config file
