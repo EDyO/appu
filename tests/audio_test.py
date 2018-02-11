@@ -16,6 +16,11 @@ class MockAudioSegment(object):
     def __getitem__(self, val):
         return self._segment[val]
 
+    def append(self, segment, crossfade=None):
+        total = MockAudioSegment()
+        total._segment.extend(segment._segment)
+        return total
+
 def test_load_mp3(monkeypatch):
     original_name = 'original.mp3'
     monkeypatch.setattr(AudioSegment, 'from_mp3', MockAudioSegment.from_mp3)
@@ -35,3 +40,9 @@ def test_get_jingles(monkeypatch):
     begin, end = get_jingles(song_name)
     assert len(begin) == 20000
     assert len(end) == 10000
+
+def test_glue_tracks(monkeypatch):
+    first = MockAudioSegment.from_mp3("whatever")
+    second = MockAudioSegment.from_mp3("Anything else")
+    final = glue_tracks([(first, 0), (second, 1000)])
+    assert len(final) == 100000
