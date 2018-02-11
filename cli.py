@@ -2,10 +2,15 @@ import ConfigParser
 import logging
 import sys
 
-def parse_args():
+def get_logger():
     """Debug mode with param -debug"""
+    # Using logger instead of print
+    l = logging.getLogger()
+    l.addHandler(logging.StreamHandler())
+    l.setLevel(logging.INFO)
     if "-debug" in sys.argv :
         l.setLevel(logging.DEBUG)
+    return l
 
 def parse_config():
     """Read config file and loads parameters as variables"""
