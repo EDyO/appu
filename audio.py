@@ -21,7 +21,7 @@ def get_jingles(song_file_name):
     jingles.
     """
     song = load_mp3(song_file_name)
-    return song[:20000], song[40000:]
+    return song[:20000], song[-40000:]
 
 
 def glue_tracks(tracks):

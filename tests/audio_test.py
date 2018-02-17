@@ -43,7 +43,9 @@ def test_get_jingles(monkeypatch):
     monkeypatch.setattr(AudioSegment, 'from_mp3', MockAudioSegment.from_mp3)
     begin, end = get_jingles(song_name)
     assert len(begin) == 20000
-    assert len(end) == 10000
+    assert len(end) == 40000
+    assert begin == range(20000)
+    assert end == range(10000, 50000)
 
 
 def test_glue_tracks(monkeypatch):
