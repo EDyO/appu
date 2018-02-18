@@ -1,67 +1,39 @@
-from pydub import AudioSegment
-from pydub.silence import split_on_silence
-import ConfigParser
-import logging
-import sys
+from cli import get_logger, parse_config
+from audio import load_mp3, get_jingles, glue_tracks
 
-#Debug mode with param -debug
+logger = get_logger()
+cfg = parse_config()
 
-if len(sys.argv) > 1 and str(sys.argv[1]) == "-debug" :
-    l = logging.getLogger("pydub.converter")
-    l.setLevel(logging.DEBUG)
-    l.addHandler(logging.StreamHandler())
-
- #read config file
-
-configParser = ConfigParser.RawConfigParser()
-configFilePath = r'./config.cfg'
-configParser.read(configFilePath)
-
-#Read mp3 tags from config file
-mp3_tags={
-    'title': configParser.get('tag-config','title'),
-    'artist': configParser.get('tag-config','artist'),
-    'album': configParser.get('tag-config','album'),
-    'track': configParser.get('tag-config','track'),
-    'comment': configParser.get('tag-config','comment'),
+# Read mp3 tags from config file
+mp3_tags = {
+    'title': cfg['title'],
+    'artist': cfg['artist'],
+    'album': cfg['album'],
+    'track': cfg['track'],
+    'comment': cfg['comment'],
 }
 
-cover_file=configParser.get('files-config','cover_file')
+logger.info("Importing podcast")
+podcast = load_mp3(cfg['podcast_file'])
 
+logger.info("Generating jingles")
+opening, ending = get_jingles(cfg['song_file'])
 
-print "Importing podcast"
-
-audio_file = configParser.get('files-config','podcast_file')
-
-if audio_file.lower().endswith('.mp3'):
-    podcast = AudioSegment.from_mp3(audio_file)
-else:
-    sys.exit('Incorrect audio file format. The file must have .mp3 extension')
-
-
-print "Importing music"
-song =  AudioSegment.from_mp3(configParser.get('files-config','song_file'))
-
-print "Generating opening music"
-opening = song[:20000]
-
-
-print "Generating final music"
-ending = song[-40000:]
-
-#podcast = split_on_silence(podcast) <-- TODO
-
-print "Normalizing podcast audio"
-
+logger.info("Normalizing podcast audio")
 podcast = podcast.normalize()
 
-print "Generating final podcast file: opening + podcast + ending"
+logger.info("Generating final podcast file: opening + podcast + ending")
+final = glue_tracks([(opening, 0), (podcast, 1000), (ending, 4000)])
 
-final = opening.append(podcast, crossfade=1000)
-final = final.append(ending,  crossfade=4000)
+logger.info("Exporting final file")
+final.export(
+    cfg['final_file'],
+    format="mp3",
+    tags=mp3_tags,
+    bitrate='48000',
+    parameters=["-ac", "1"],
+    id3v2_version='3',
+    cover=cfg['cover_file'],
+)
 
-print "Exporting final file"
-
-final.export(configParser.get('files-config','final_file'), format="mp3", tags=mp3_tags, bitrate='48000', parameters=["-ac", "1"], id3v2_version='3', cover=cover_file)
-
-print "Done! File %s generated correctly" %configParser.get('files-config','final_file')
+logger.info("Done! File {} generated correctly".format(cfg['final_file']))
