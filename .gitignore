@@ -92,3 +92,6 @@ ENV/
 # Remote sync
 
 .remote-sync.json
+
+# Visual code 
+.vscode
