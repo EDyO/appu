@@ -8,7 +8,7 @@ def get_logger():
     # Using logger instead of print
     logger = logging.getLogger()
     logger.addHandler(logging.StreamHandler())
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.WARNING)
     if "-debug" in sys.argv:
         logger.setLevel(logging.DEBUG)
     return logger
