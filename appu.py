@@ -13,19 +13,19 @@ mp3_tags = {
     'comment': cfg['comment'],
 }
 
-logger.info("Importing podcast")
+logger.warning("Importing podcast")
 podcast = load_mp3(cfg['podcast_file'],"podcast")
 
-logger.info("Generating jingles")
+logger.warning("Generating jingles")
 opening, ending = get_jingles(cfg['song_file'])
 
-logger.info("Normalizing podcast audio")
+logger.warning("Normalizing podcast audio")
 podcast = podcast.normalize()
 
-logger.info("Generating final podcast file: opening + podcast + ending")
+logger.warning("Generating final podcast file: opening + podcast + ending")
 final = glue_tracks([(opening, 0), (podcast, 1000), (ending, 4000)])
 
-logger.info("Exporting final file")
+logger.warning("Exporting final file")
 final.export(
     cfg['final_file'],
     format="mp3",
@@ -36,4 +36,4 @@ final.export(
     cover=cfg['cover_file'],
 )
 
-logger.info("Done! File {} generated correctly".format(cfg['final_file']))
+logger.warning("Done! File {} generated correctly".format(cfg['final_file']))
