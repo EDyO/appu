@@ -14,7 +14,7 @@ mp3_tags = {
 }
 
 logger.warning("Importing podcast")
-podcast = load_mp3(cfg['podcast_file'],"podcast")
+podcast = load_mp3(cfg['podcast_file'], "podcast")
 
 logger.warning("Generating jingles")
 opening, ending = get_jingles(cfg['song_file'])
