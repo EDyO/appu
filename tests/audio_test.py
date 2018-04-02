@@ -1,8 +1,7 @@
-from pydub import AudioSegment
-
+import os
 import pytest
-
-from audio import load_mp3, get_jingles, glue_tracks
+from pydub import AudioSegment
+from audio import download_file, load_mp3, get_jingles, glue_tracks
 
 
 class MockAudioSegment(object):
@@ -27,6 +26,19 @@ def mock_download_file(file_name, file_type='podcast'):
     return "files/{}.mp3".format(file_type)
 
 
+def mock_get(url, headers={}):
+    class MockResponse:
+        def __init__(self):
+            self.data = 'SOME CONTENT'
+            self.headers = headers
+
+        @property
+        def content(self):
+            return self.data
+
+    return MockResponse()
+
+
 def test_load_mp3(monkeypatch):
     original_name = 'original.mp3'
     monkeypatch.setattr(AudioSegment, 'from_mp3', MockAudioSegment.from_mp3)
@@ -48,6 +60,16 @@ def test_load_mp4_fails(monkeypatch):
     with pytest.raises(SystemExit) as sys_exit:
         audio_segment = load_mp3(original_name)
     assert 'The file must have .mp3 extension' in str(sys_exit)
+
+
+def test_download_file(monkeypatch, tmpdir):
+    original_name = 'http://service.com/original.mp3'
+    monkeypatch.setattr('requests.get', mock_get)
+    downloaded_file = download_file(original_name, 'podcast')
+    assert downloaded_file == 'files/podcast.mp3'
+    downloaded_content = open(downloaded_file)
+    assert downloaded_content.read() == 'SOME CONTENT'
+    os.unlink('files/podcast.mp3')
 
 
 def test_get_jingles(monkeypatch):
