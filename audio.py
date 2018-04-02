@@ -15,7 +15,7 @@ def download_file(mp3_file_name, file_type):
         output.write(remotefile.content)
     return result_file
 
-def load_mp3(mp3_file_name, file_type):
+def load_mp3(mp3_file_name, file_type='podcast'):
     """
     This tries to load the audio from a named mp3 file.
     It checks the filename has mp3 extension.
