@@ -47,7 +47,7 @@ def test_load_mp3(monkeypatch):
 
 
 def test_load_mp3_url(monkeypatch):
-    original_name = 'http://service.com/original.mp3'
+    original_name = 'https://service.com/original.mp3'
     monkeypatch.setattr(AudioSegment, 'from_mp3', MockAudioSegment.from_mp3)
     monkeypatch.setattr('audio.download_file', mock_download_file)
     audio_segment = load_mp3(original_name)
@@ -58,7 +58,7 @@ def test_load_mp4_fails(monkeypatch):
     original_name = 'original.mp4'
     monkeypatch.setattr(AudioSegment, 'from_mp3', MockAudioSegment.from_mp3)
     with pytest.raises(SystemExit) as sys_exit:
-        audio_segment = load_mp3(original_name)
+        load_mp3(original_name)
     assert 'The file must have .mp3 extension' in str(sys_exit)
 
 
