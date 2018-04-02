@@ -23,9 +23,21 @@ class MockAudioSegment(object):
         return total
 
 
+def mock_download_file(file_name, file_type='podcast'):
+    return "files/{}.mp3".format(file_type)
+
+
 def test_load_mp3(monkeypatch):
     original_name = 'original.mp3'
     monkeypatch.setattr(AudioSegment, 'from_mp3', MockAudioSegment.from_mp3)
+    audio_segment = load_mp3(original_name)
+    assert len(audio_segment) == 50000
+
+
+def test_load_mp3_url(monkeypatch):
+    original_name = 'http://service.com/original.mp3'
+    monkeypatch.setattr(AudioSegment, 'from_mp3', MockAudioSegment.from_mp3)
+    monkeypatch.setattr('audio.download_file', mock_download_file)
     audio_segment = load_mp3(original_name)
     assert len(audio_segment) == 50000
 
