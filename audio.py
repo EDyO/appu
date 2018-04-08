@@ -1,6 +1,6 @@
-from pydub import AudioSegment
+import re
 import requests
-import string
+from pydub import AudioSegment
 
 
 def download_file(mp3_file_name, file_type):
@@ -8,19 +8,23 @@ def download_file(mp3_file_name, file_type):
     This check if is a url and donwload the file
     in files directory with podcast.mp3 filename.
     """
-    remotefile = requests.get(mp3_file_name, headers={"User-Agent":"Wget/1.19.4 (linux-gnu)"})
+    remotefile = requests.get(
+        mp3_file_name,
+        headers={"User-Agent": "Wget/1.19.4 (linux-gnu)"})
     # Set different file name if is jingle or podcast file.
-    result_file="files/{}.mp3".format(file_type)
-    with open(result_file,'wb') as output:
+    result_file = "files/{}.mp3".format(file_type)
+    with open(result_file, 'wb') as output:
         output.write(remotefile.content)
     return result_file
 
-def load_mp3(mp3_file_name, file_type):
+
+def load_mp3(mp3_file_name, file_type='podcast'):
     """
     This tries to load the audio from a named mp3 file.
     It checks the filename has mp3 extension.
     """
-    if mp3_file_name.startswith('https://') or mp3_file_name.startswith('http://'):
+    url_pattern = re.compile('^http[s]://')
+    if url_pattern.match(mp3_file_name):
         mp3_file_name = download_file(mp3_file_name, file_type)
     if not mp3_file_name.lower().endswith('.mp3'):
         raise SystemExit(
