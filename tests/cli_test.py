@@ -12,7 +12,7 @@ def test_get_logger():
     for handler in logger.handlers:
         handlerClasses.append(handler.__class__)
     assert logging.StreamHandler in handlerClasses
-    assert logger.level == logging.INFO
+    assert logger.level == logging.WARNING
 
 
 def test_get_logger_debug(monkeypatch):
