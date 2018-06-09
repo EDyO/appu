@@ -4,6 +4,8 @@ sudo: required
 language: python
 python:
   - "2.7"
+git:
+  depth: 1
 before_script:
   - sudo apt-get install libav-tools
   - pip install --upgrade pydub
@@ -11,7 +13,7 @@ before_script:
 branches:
   only:
   - master
-  
+
 script:
   - git config --global user.email "travis@edyo.es"
   - git config --global user.name "Travis for EDyO"
