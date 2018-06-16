@@ -1,0 +1,448 @@
+* Cómo publicar un episodio de Entre Dev y Ops
+:PROPERTIES:
+:END:
+
+** Definición del programa
+*** Objetivos
+    Éste programa permite publicar un episodio grabado, en formato audio MP3, y compartido en [[https://www.dropbox.com][Dropbox]].
+    La grabación disponible será:
+    - Descargada
+    - Editada para añadir las cuñas de entrada y salida, y normalizar el volumen
+    - Publicada, la versión editada
+    - Comprobada su publicación
+
+    El programa se llama ~publish_podcast.sh~.
+
+*** Condiciones
+    La grabación usada no se podrá editar durante el proceso, por lo que, en caso necesario, deberá ser previamente editada.
+
+*** Requerimientos
+    Para usar el programa será necesario tener acceso a:
+    - La carpeta compartida en [[Dropbox]]
+    - [[https://developers.google.com/identity/protocols/OAuth2][Credenciales de Google Drive]] con acceso a la carpeta compartida ~EDYO~.
+    - Al servidor de publicación, mediante ssh, con claves públicas (~ssh edyo@podcast.edyo.es~)
+      
+    Aunque es de acceso público, el programa accede al CI de Travis para ~appu~.
+
+    Las dependencias de este programa son:
+    - [[https://www.python.org/downloads/][Python]]: Necesario para utilizar recode (ver más adelante), versión 3.6 recomendada.
+    - [[https://www.dropboxwiki.com/tips-and-tricks/using-the-official-dropbox-command-line-interface-cli#PUBURL][Dropbox CLI]]: El CLI debe estar instalado en el sistema.
+    - [[https://github.com/EDyO/appu][appu]]: El programa clonará o actualizará ~appu~, en el /path/ indicado.
+    - [[https://github.com/EDyO/pan][pan]]: ~pan~ está instalado en el servidor en el que se sirven los episodios.
+    - [[https://github.com/prasmussen/gdrive][gdrive]]: Es un CLI para Google Drive que se necesita localmente. Hay versiones para [[https://www.dropbox.com/sh/1kwu911b1oh8jms/AAAI0kiVF6aHGyG7gEIUuUtka/gdrive/gdrive_linux_amd64?dl=0][Linux]], [[https://www.dropbox.com/sh/1kwu911b1oh8jms/AADnw2fuGNTczlYV3w1G9A5aa/gdrive/gdrive_darwin_amd64?dl=0][MacOS]], y [[https://www.dropbox.com/sh/1kwu911b1oh8jms/AACCzSW8CJ6VJcTNldU-H3Eba/gdrive/gdrive_windows_amd64?dl=0][Windows]].
+    - [[https://github.com/ChrisTrenkamp/goxpath][goxpath]]: Es una herramienta CLI para consultar XPath. Hay versiones para [[https://www.dropbox.com/sh/1kwu911b1oh8jms/AABBWJi0gB_qCKGOPH2HlZXPa/goxpath/goxpath_linux_amd64?dl=0][Linux]], [[https://www.dropbox.com/sh/1kwu911b1oh8jms/AABf2x_k20-LcbhNUwbswY5Oa/goxpath/goxpath_darwin_amd64?dl=0][MacOS]], y [[https://www.dropbox.com/sh/1kwu911b1oh8jms/AADxi0sqiQ3PZHgViep3I7q_a/goxpath/goxpath_windows_amd64?dl=0][Windows]].
+    - [[https://github.com/rrthomas/recode/][recode]]: Es una herramienta CLI GNU para recodificar. Existen paquetes para Linux y MacOS(brew). Para Windows, quizás lo mejor sea usar el ubuntu integrado.
+    - [[https://stedolan.github.io/jq/][jq]]: Es una herramienta CLI para consultar JSON.
+
+*** Entradas, salidas y resultados del programa
+    Las entradas del programa son:
+    - La grabación maestra del episodio a publicar: El fichero en la carpeta de Dropbox local, con el /path/ completo. Por ejemplo, ~${HOME}/Dropbox/EDyO/podcast/edyo-32.master.mp3~.
+
+    El programa no tendrá salidas, más que los anuncios de los pasos que vaya dando, o los errores que pueda encontrar.
+    No obstante, si no hay errores, el programa resultará en la publicación del episodio indicado.
+
+*** Variables globales y constantes
+    A continuación se definen las siguientes variables globales:
+    - ~DRIVE_CREDENTIALS_FILE~: Será el /path/ relativo desde ~${HOME}/.gdrive~ al fichero de credenciales con acceso a la carpeta compartida en Drive.
+    - ~DROPBOX_CLI~: Será el /path/ completo al CLI de Dropbox. Si se han seguido las instrucciones de la documentación del CLI, debería ser ~${HOME}/bin/dropbox.py~.
+    - ~PROJECTS_PATH~: Será el /path/ dónde el programa clonará o actualizará ~appu~.
+    - ~PUBLIC_FEED~: Será la URL al /feed/ del /podcast/.
+      
+*** Pasos del programa
+    El programa realizará los siguientes pasos:
+    - ~get_dropbox_url~: [[Obtener el enlace del fichero en Dropbox]]
+    - ~clone_appu~: [[Clonar o actualizar el repositorio de ~appu~]]
+    - ~get_episode_details~: [[Obtener los detalles del episodio a publicar]]
+    - ~run_appu~: [[Utilizar el CI de ~appu~ para editar el episodio]]
+    - ~ssh_server~: [[Acceder al servidor de publicación]]
+    - ~download_edited_mp3~: [[Descargar el episodio editado en el servidor de publicación]]
+    - ~update_feed~: [[Actualizar el /feed/ del podcast, con los datos]]
+    - ~validate_publishing~: [[Validar la publicación]]
+    - ~check_publishing~: [[Comprobar que la publicación está disponible]]
+    - ~check_publishing_all~: [[Comprobar que la publicación está disponible en todos los feeds]]
+      
+    Otros pasos, de soporte y ayuda son:
+    - ~get_episode_script~: [[Obtener el guión del episodio]]
+    - ~count_tracks~: [[Obtener la pista correspondiente al episodio]]
+
+    #+BEGIN_SRC sh :noweb yes :tangle ../bin/publish_podcast.sh :tangle-mode (identity #o755)
+      DROPBOX_CLI=${HOME}/bin/dropbox.py
+      PROJECTS_PATH=${HOME}/src
+      DRIVE_CREDENTIALS_FILE=../.credentials/edyo-test-5159ae711f8b.json
+      PUBLIC_FEED=http://podcast.edyo.es/feed_podcast.xml
+
+      <<count_tracks>>
+
+      <<get_episode_script>>
+
+      <<get_dropbox_url>>
+
+      <<clone_appu>>
+
+      <<get_episode_details>>
+
+      <<run_appu>>
+
+      <<ssh_server>>
+
+      <<download_edited_mp3>>
+
+      <<update_feed>>
+
+      <<validate_publishing>>
+
+      <<check_publishing>>
+
+      <<check_publishing_all>>
+
+      if [[ "${1}" == "" ]]; then
+        echo "No se ha especificado fichero de la grabación" >&2
+        exit 1
+      fi
+      RECORDING=${1}
+
+      export RECORDING_URL=$(get_dropbox_url ${RECORDING})
+      if [[ "$?" == "0" ]]; then
+        clone_appu || exit 1
+        get_episode_details ${RECORDING} || exit 1
+        APPU_JOB_RESULT=$(run_appu)
+        if [[ "${APPU_JOB_RESULT}" == "passed" ]]; then
+          download_edited_mp3 || exit 1
+          update_feed || exit 1
+          VALIDATION_ERRORS=$(validate_publishing)
+          if [[ "${VALIDATION_ERRORS}" == "0" ]]; then
+            check_publishing_all || exit 1
+          else
+            echo "El RSS no valida"
+          fi
+        else
+          echo "El build de Appu falló" >&2
+          exit 1
+        fi
+      fi
+    #+END_SRC
+
+** Obtener el enlace del fichero en Dropbox
+*** Descripción
+    En este paso, se utilizará ~DROPBOX_CLI~ para obtener la URL de la grabación.
+
+*** Entradas, salidas y resultados de la fase
+    Este paso tiene sólo una entrada que es la ubicación del fichero en la carpeta local de Dropbox.
+
+    La salida, salvo errores, será el enlace de descarga del fichero desde Dropbox.
+    En caso de errores, este paso devolverá un valor distinto de 0.
+
+    #+NAME: get_dropbox_url
+    #+BEGIN_SRC sh :results silent
+      function get_dropbox_url {
+        echo "Obteniendo URL del episodio" >&2
+        OUTPUT=$(${DROPBOX_CLI} sharelink ${1} | sed -e 's/dl=0/dl=1/')
+        if [[ "${OUTPUT}" =~ ^https:.*?dl=1$ ]]; then
+          echo ${OUTPUT} | sed -e 's/?dl=1/?dl=0/g'
+        else
+          echo ${OUTPUT} >&2
+          exit 1
+        fi
+      }
+    #+END_SRC
+
+** Clonar o actualizar el repositorio de ~appu~
+
+*** Descripción
+    En este paso se comprobará si existe el repositorio ~${PROJECTS_PATH}/appu~. Si no existe, se clonará, si existiera, se asegurará que está en la rama master, y lo actualizará.
+
+*** Entradas, salidas y resultados de la fase
+    Este paso no tiene entradas ni salidas, exceptuando la salida de los comandos de git.
+
+    No obstante, su resultado será que el repositorio de ~appu~ en la ubicación especificada por ~PROJECTS_PATH~ estará en la rama master y actualizado.
+
+    #+NAME: clone_appu
+    #+BEGIN_SRC sh :results silent
+      function clone_appu {
+        curdir=$(pwd)
+        if [[ ! -d ${PROJECTS_PATH}/appu/.git ]]; then
+          echo "Clonando appu" >&2
+          cd ${PROJECTS_PATH}
+          git clone git@github.com:EDyO/appu >&2 || exit 1
+        else
+          echo "Actualizando appu" >&2
+          cd ${PROJECTS_PATH}/appu
+          git checkout master >&2 || exit 1
+          git pull >&2 || exit 1
+        fi
+        cd ${curdir}
+      }
+    #+END_SRC
+   
+** Obtener los detalles del episodio
+*** Obtener el guión del episodio
+    #+NAME: get_episode_script
+    #+BEGIN_SRC sh :results silent
+          function get_episode_script {
+            echo "Obteniendo el guión para ${1}" >&2
+            SCRIPT_NAME_HOOK=$(
+              echo ${1} | \
+              awk -F. '{ print $1 }' | \
+              tr '-' ' ' | \
+              sed -e 's/edyo pildora/Píldora /' \
+                  -e 's/edyo colaboracion /Colaboracion /' \
+                  -e 's/edyo/Podcast/'
+            )
+            echo "Buscando el guión ${SCRIPT_NAME_HOOK}" >&2
+            SCRIPT_DATA=$(
+              gdrive --service-account ${DRIVE_CREDENTIALS_FILE} list \
+                     --no-header \
+                     --query "name contains '${SCRIPT_NAME_HOOK}'" | \
+              tr -s ' ' | \
+              sed -e 's/^\([-_0-9a-zA-Z]*\) \(.*\) doc \(.*\)$/\1;\2;\3/'
+            )
+            if [[ "$?" != "0" ]]; then
+              echo "Fallo buscando el guión" >&2
+              exit 1
+            fi
+            echo "Descargando el guión ${SCRIPT_NAME_HOOK}" >&2
+            SCRIPT_ID=$(echo ${SCRIPT_DATA} | cut -d\; -f1)
+            EXPORT_OUTPUT=$(
+              gdrive --service-account ${DRIVE_CREDENTIALS_FILE} export \
+                     --mime text/html ${SCRIPT_ID}
+            )
+            if [[ "$?" != "0" ]]; then
+              echo -e "\nFallo exportando el guión" >&2
+              exit 1
+            fi
+            EXPORT_FILE=$(
+              echo ${EXPORT_OUTPUT} | \
+              sed -e "s/Exported '\(.*\)' with.*$/\1/" -e "s/ /\\ /g"
+            )
+            mv "${EXPORT_FILE}" /tmp/${1}_script.html
+            echo "${SCRIPT_DATA};/tmp/${1}_script.html"
+          }
+    #+END_SRC
+
+*** Obtener la pista correspondiente al episodio
+    #+NAME: count_tracks
+    #+BEGIN_SRC sh :results silent
+      function count_tracks {
+        curl -s ${PUBLIC_FEED} > /tmp/feedpodcast.xml   
+        goxpath -u '/rss/channel/item' /tmp/feedpodcast.xml | wc -l
+      }
+    #+END_SRC
+
+*** Obtener los detalles del episodio a publicar
+    #+NAME: get_episode_details
+    #+BEGIN_SRC sh :results silent
+      function get_episode_details {
+        echo "Obteniendo detalles del episodio" >&2
+        MASTER_FILE_NAME=$(
+          echo ${1} | \
+          awk -F/ '{ print $NF }'
+        )
+        export FINAL_FILE_NAME=$(
+          echo ${MASTER_FILE_NAME} | \
+          sed -e 's/.master//g'
+        )
+        SCRIPT_DATA=$(get_episode_script ${MASTER_FILE_NAME})
+        if [[ "$?" != 0 ]]; then
+          exit 1
+        fi
+        echo "Procesando el guión para obtener detalles" >&2
+        SCRIPT_NAME=$(echo ${SCRIPT_DATA} | cut -d\; -f2)
+        SCRIPT_DATE=$(echo ${SCRIPT_DATA} | cut -d\; -f3)
+        EPISODE_SCRIPT=$(echo ${SCRIPT_DATA} | cut -d\; -f4)
+        echo -n "Obteniendo título " >&2
+        export EPISODE_TITLE=$(
+          echo ${SCRIPT_NAME} | \
+          sed -e 's/^Podcast/EDyO/' \
+              -e 's/^Píldora/EDyO &/' \
+              -e 's/^Colaboración/EDyO &/'
+        )
+        echo ${EPISODE_TITLE} >&2
+        echo -n "Obteniendo año " >&2
+        export EPISODE_YEAR=$(echo ${SCRIPT_DATE} | cut -d- -f1)
+        echo ${EPISODE_YEAR} >&2
+        echo -n "Obteniendo pista " >&2
+        export EPISODE_TRACK=$(($(count_tracks) + 1))
+        echo ${EPISODE_TRACK} >&2
+        echo -n "Obteniendo comentario " >&2
+        export EPISODE_COMMENT=$(
+          goxpath -u -v '/html/body/p[contains(@style,"color:#666666;")]' \
+            ${EPISODE_SCRIPT} | recode html..utf-8
+        )
+        echo ${EPISODE_COMMENT} >&2
+        echo "Obteniendo enlaces" >&2
+        export EPISODE_LINKS=""
+        LI=1
+        XPATH="/html/body/ul[last()]/li"
+        LINK=$(
+          goxpath -u -v "${XPATH}[${LI}]" ${EPISODE_SCRIPT} | \
+          recode html..utf-8
+        )
+        while [[ "${LINK}" != "" ]]; do
+          echo -e "\t${LINK}" >&2
+          export EPISODE_LINKS="${EPISODE_LINKS}#${LINK}"
+          LI=$((${LI} + 1))
+          LINK=$(
+            goxpath -u -v "${XPATH}[${LI}]" ${EPISODE_SCRIPT} | \
+            recode html..utf-8
+          )
+        done
+        export APPU_OUTPUT_FILE_NAME=podcast/$(
+          echo ${FINAL_FILE_NAME} | \
+          awk -F. '{ print $1 }'
+               ).mp3
+      }
+    #+END_SRC
+
+** Utilizar el CI de ~appu~ para editar el episodio
+
+    #+NAME: run_appu
+    #+BEGIN_SRC sh :results silent
+      function run_appu {
+        echo "Configurando ejecución de appu" >&2
+        envsubst < templates/appu.cfg >${PROJECTS_PATH}/appu/config.cfg
+        cd ${PROJECTS_PATH}/appu
+        git add config.cfg >&2
+        git commit -m "Track ${EPISODE_TRACK} " >&2
+        COMMIT_ID=$(git rev-parse HEAD)
+        git push >&2 || exit 1
+        echo -n "Ejecutando appu" >&2
+        TRAVIS_BLDS_URL=https://api.travis-ci.org/repos/EDyO/appu/builds
+        JQ_QUERY=". as { builds: \$builds, commits: \$commits} | \$builds[] |"
+        JQ_QUERY="${JQ_QUERY} select(.commit_id == (\$commits[] |"
+        JQ_QUERY="${JQ_QUERY} select(.sha == env.COMMIT_ID).id)).state"
+        BLD_STATE=$(
+          curl -s -H 'Accept:application/vnd.travis-ci.2+json' \
+            -G ${TRAVIS_BLDS_URL} | \
+          COMMIT_ID=${COMMIT_ID} jq "${JQ_QUERY}" | \
+          tr -d '"'
+        )
+        while [[ "${BLD_STATE}" != "passed" && "${BLD_STATE}" != "failed" ]]; do
+          echo -n "." >&2
+          sleep 30
+          BLD_STATE=$(
+            curl -s -H 'Accept:application/vnd.travis-ci.2+json' \
+              -G ${TRAVIS_BLDS_URL} | \
+            COMMIT_ID=${COMMIT_ID} jq "${JQ_QUERY}" | \
+            tr -d '"'
+          )
+        done
+        echo ${BLD_STATE}
+        cd - > /dev/null
+      }
+    #+END_SRC
+
+** Acceder al servidor de publicación
+
+    #+NAME: ssh_server
+    #+BEGIN_SRC sh :results silent
+      function ssh_server {
+        ssh edyo@podcast.edyo.es "${1}"
+      }
+    #+END_SRC
+
+** Descargar el episodio editado en el servidor de publicación
+
+    #+NAME: download_edited_mp3
+    #+BEGIN_SRC sh :results silent
+      function download_edited_mp3 {
+        echo "Descargando el episodio editado en el servidor" >&2
+        EPISODE_URL="https://github.com/EDyO/appu/raw/travis_ci/"
+        EPISODE_URL="${EPISODE_URL}${APPU_OUTPUT_FILE_NAME}"
+        export EPISODE_LENGTH=$(
+          curl -sL -I ${EPISODE_URL} | \
+          grep 'Content-Length' | \
+          awk '{ print $2 }'
+        )
+        EPISODE_DEST="podcast/files/${FINAL_FILE_NAME}"
+        curl -sLG ${EPISODE_URL} > /tmp/${FINAL_FILE_NAME}
+        scp /tmp/${FINAL_FILE_NAME} edyo@podcast.edyo.es:${EPISODE_DEST}
+        rm /tmp/${FINAL_FILE_NAME}
+      }
+    #+END_SRC
+
+** Actualizar el /feed/ del podcast, con los datos
+
+    #+NAME: update_feed
+    #+BEGIN_SRC sh :results silent
+      function update_feed {
+        echo "Actualizando el feed" >&2
+        I='    '
+        ssh_server "echo -ne '${I}- title: ${EPISODE_TITLE}\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}  description: |\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}    ${EPISODE_COMMENT}\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}    Blog Entre Dev y Ops - http://www.entredevyops.es\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}    Twitter Entre Dev y Ops - https://twitter.com/EntreDevYOps\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}    LinkedIn Entre Dev y Ops - https://www.linkedin.com/in/entre-dev-y-ops-a7404385/\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}    Patreon Entre Dev y Ops - https://www.patreon.com/edyo\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}    Amazon Entre Dev y Ops - https://amzn.to/2HrlmRw\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}    Enlaces comentados:' >> feed_podcast.yml"
+        LINKS=$(echo ${EPISODE_LINKS} | sed -e 's/#/\\n        /g')
+        ssh_server "echo -ne '${I}    ${LINKS}\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}  link: http://podcast.edyo.es/${APPU_OUTPUT_FILE_NAME}\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}  pubDate: $(TZ='UTC' date -R)\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}  enclosure:\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}    attributes:\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}      length: ${EPISODE_LENGTH}\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}      type: audio/mpeg\n' >> feed_podcast.yml"
+        ssh_server "echo -ne '${I}      url: http://podcast.edyo.es/${APPU_OUTPUT_FILE_NAME}\n' >> feed_podcast.yml"
+        ssh_server "./pan feed_podcast.yml > podcast/feed_podcast.xml"
+      }
+    #+END_SRC
+
+** Validar la publicación
+
+    #+NAME: validate_publishing
+    #+BEGIN_SRC sh :results silent
+      function validate_publishing {
+        echo "Validando feed" >&2
+        VALIDATION_URL="https://validator.w3.org/feed/check.cgi?"
+        VALIDATION_URL="${VALIDATION_URL}url=podcast.edyo.es%2Ffeed_podcast.xml"
+        curl -s ${VALIDATION_URL} | \
+        egrep -c "This feed does not validate|This feed is valid, but"
+      }
+    #+END_SRC
+
+** Comprobar que la publicación esté disponible
+
+    #+NAME: check_publishing
+    #+BEGIN_SRC sh :results silent
+      function check_publishing {
+        URL=${1:-"http://feedpress.me/edyo"}
+        FEED=${2:-"FeedPress"}
+        echo -n "Comprobando publicación en ${FEED}" >&2
+        PRESENCE=$(
+          curl -s ${URL} | \
+          grep -c "${EPISODE_TITLE}"
+        )
+        while [[ "${PRESENCE}" == "0" ]]; do
+          sleep 60
+          echo -n "."
+          PRESENCE=$(
+            curl -s ${URL} | \
+            grep -c "${EPISODE_TITLE}"
+          )
+        done
+        echo " Ya está en ${FEED}" >&2
+      }
+    #+END_SRC
+
+** Comprobar que la publicación esté disponible en todos los feeds
+
+    #+NAME: check_publishing_all
+    #+BEGIN_SRC sh :results silent
+      function check_publishing_all {
+        check_publishing
+        IVOOX_URL="https://www.ivoox.com/"
+        IVOOX_URL="${IVOOX_URL}podcast-entre-dev-y-ops-podcast_sq_f1112910_1"
+        IVOOX_URL="${IVOOX_URL}.html"
+        check_publishing ${IVOOX_URL} iVoox
+        ITUNES_URL="https://itunes.apple.com/es/podcast/entredevyops-podcast/"
+        ITUNES_URL="${ITUNES_URL}id866788492?mt=2"
+        check_publishing ${ITUNES_URL} iTunes
+      }
+    #+END_SRC
+** TODO Tareas pendientes
+*** Añadir chequeos y asegurar posibles fallos
+*** Compilar y publicar la herramienta goxpath, para Linux, Windows y Mac
+*** Integrar con Appu
+*** Convertir en módulos Python
