@@ -1,5 +1,5 @@
 from cli import get_logger, parse_config
-from audio import load_mp3, get_jingles, glue_tracks
+from audio import load_mp3, get_jingles, glue_tracks, check_cover
 
 logger = get_logger()
 cfg = parse_config()
@@ -12,6 +12,8 @@ mp3_tags = {
     'track': cfg['track'],
     'comment': cfg['comment'],
 }
+
+check_cover(cfg['cover_file'])
 
 logger.warning("Importing podcast")
 podcast = load_mp3(cfg['podcast_file'], "podcast")
