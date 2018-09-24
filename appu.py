@@ -13,6 +13,8 @@ mp3_tags = {
     'comment': cfg['comment'],
 }
 
+check_cover(cfg['cover_file'])
+
 logger.warning("Importing podcast")
 podcast = load_mp3(cfg['podcast_file'], "podcast")
 
@@ -33,7 +35,7 @@ final.export(
     bitrate='48000',
     parameters=["-ac", "1"],
     id3v2_version='3',
-    cover=check_cover(cfg['cover_file']),
+    cover=cfg['cover_file'],
 )
 
 logger.warning("Done! File {} generated correctly".format(cfg['final_file']))
