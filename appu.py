@@ -1,5 +1,5 @@
 from cli import get_logger, parse_config
-from audio import load_mp3, get_jingles, glue_tracks
+from audio import load_mp3, get_jingles, glue_tracks, check_cover
 
 logger = get_logger()
 cfg = parse_config()
@@ -33,7 +33,7 @@ final.export(
     bitrate='48000',
     parameters=["-ac", "1"],
     id3v2_version='3',
-    cover=cfg['cover_file'],
+    cover=check_cover(cfg['cover_file']),
 )
 
 logger.warning("Done! File {} generated correctly".format(cfg['final_file']))

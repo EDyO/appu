@@ -1,5 +1,6 @@
 import re
 import requests
+import os.path
 from pydub import AudioSegment
 
 
@@ -31,6 +32,16 @@ def load_mp3(mp3_file_name, file_type='podcast'):
             'Incorrect audio file format. The file must have .mp3 extension'
         )
     return AudioSegment.from_mp3(mp3_file_name)
+
+def check_cover(cover_file):
+    """
+    Check if local cover file exist to avoid errors in transformation.
+    """
+    if not os.path.exists(cover_file):
+        raise SystemExit(
+            'Cover file not found.'
+        )
+    return cover_file
 
 
 def get_jingles(song_file_name):
