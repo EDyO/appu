@@ -7,7 +7,7 @@ from audio import download_file, load_mp3, get_jingles, glue_tracks
 class MockAudioSegment(object):
     @classmethod
     def from_mp3(self, file_name):
-        self._segment = range(50000)
+        self._segment = list(range(50000))
         return self()
 
     def __len__(self):
@@ -34,7 +34,7 @@ def mock_get(url, headers={}):
 
         @property
         def content(self):
-            return self.data
+            return self.data.encode()
 
     return MockResponse()
 
@@ -78,8 +78,8 @@ def test_get_jingles(monkeypatch):
     begin, end = get_jingles(song_name)
     assert len(begin) == 20000
     assert len(end) == 40000
-    assert begin == range(20000)
-    assert end == range(10000, 50000)
+    assert begin == list(range(20000))
+    assert end == list(range(10000, 50000))
 
 
 def test_glue_tracks(monkeypatch):
