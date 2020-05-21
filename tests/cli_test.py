@@ -1,4 +1,4 @@
-import ConfigParser
+import configparser
 import logging
 import sys
 
@@ -51,6 +51,6 @@ class MockRawConfigParser(object):
 
 
 def test_parse_config(monkeypatch):
-    monkeypatch.setattr(ConfigParser, "RawConfigParser", MockRawConfigParser)
+    monkeypatch.setattr(configparser, "RawConfigParser", MockRawConfigParser)
     cfg = parse_config()
     assert isinstance(cfg, dict)
