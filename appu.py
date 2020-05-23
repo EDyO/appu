@@ -1,5 +1,6 @@
 from cli import get_logger, parse_config
 from audio import load_mp3, get_jingles, glue_tracks
+from publish import upload_file
 
 logger = get_logger()
 cfg = parse_config()
@@ -37,3 +38,6 @@ final.export(
 )
 
 logger.warning("Done! File {} generated correctly".format(cfg['final_file']))
+
+if upload_file(cfg['final_file'], cfg['podcast_bucket']):
+    logger.info("Episode uploaded to {}".format(cfg['podcast_bucket']))
