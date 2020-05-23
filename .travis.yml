@@ -7,7 +7,7 @@ python:
 git:
   depth: 1
 before_script:
-  - sudo apt-get install libav-tools
+  - sudo apt-get install ffmpeg
   - pip install -r requirements.txt
 
 branches:
