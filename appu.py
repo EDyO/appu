@@ -1,5 +1,5 @@
 from cli import get_logger, parse_config
-from audio import load_mp3, get_jingles, glue_tracks
+from audio import load_mp3, get_jingles, glue_tracks, normalize_audio
 from publish import upload_file
 
 logger = get_logger()
@@ -21,7 +21,7 @@ logger.info("Generating jingles")
 opening, ending = get_jingles(cfg['song_file'])
 
 logger.info("Normalizing podcast audio")
-podcast = podcast.normalize()
+podcast = normalize_audio(podcast)
 
 logger.info("Generating final podcast file: opening + podcast + ending")
 final = glue_tracks([(opening, 0), (podcast, 1000), (ending, 4000)])
