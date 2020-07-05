@@ -1,7 +1,7 @@
 import re
 import requests
 from pydub import AudioSegment
-
+from pydub.effects import normalize
 
 def download_file(mp3_file_name, file_type):
     """
@@ -52,3 +52,9 @@ def glue_tracks(tracks):
     for audio, fade in tracks[1:]:
         final = final.append(audio, crossfade=fade)
     return final
+
+def normalize_audio(podcast_file):
+    """
+    This function normalize track
+    """
+    return normalize(podcast_file, headroom=-1.5)
