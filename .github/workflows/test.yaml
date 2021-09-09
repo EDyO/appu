@@ -1,0 +1,18 @@
+on: 
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      - 
+        name: Build Docker image
+        run: docker build --pull --rm -f "Dockerfile" -t appu .
+      - 
+        name: Run tests in Docker container
+        run: docker run -ti --rm appu /bin/sh -c 'pip install -r dev-requirements.txt; python -m pytest'
