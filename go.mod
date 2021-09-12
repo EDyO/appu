@@ -3,6 +3,7 @@ module github.com/EDyO/appu
 go 1.17
 
 require (
+	github.com/beevik/etree v1.1.0
 	github.com/docker/docker v20.10.8+incompatible
 	gopkg.in/ini.v1 v1.63.0
 	gopkg.in/yaml.v2 v2.4.0
