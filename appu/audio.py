@@ -5,7 +5,7 @@ from pydub.effects import normalize
 
 def download_file(mp3_file_name, file_type):
     """
-    This check if is a url and donwload the file
+    This check if is a url and download the file
     in files directory with podcast.mp3 filename.
     """
     remotefile = requests.get(
