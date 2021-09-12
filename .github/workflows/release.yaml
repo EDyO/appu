@@ -24,3 +24,45 @@ jobs:
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u EDyO --password-stdin
           docker build --pull --rm -f "appu/Dockerfile" -t ghcr.io/edyo/appu:${{ steps.tag_name.outputs.SOURCE_TAG }} appu/.
           docker push ghcr.io/edyo/appu:${{ steps.tag_name.outputs.SOURCE_TAG }}
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16'
+      -
+        name: Run tests
+        run: |
+          go test -v ./... -race -covermode=atomic
+  release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        destination_os: [linux, windows, darwin]
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16'
+      -
+        name: Build 
+        run: |
+          scripts/build.sh ${{ matrix.destination_os }} amd64
+      - 
+        name: Release built binaries
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
