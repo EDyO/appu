@@ -41,7 +41,7 @@ func TestConfig(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error parsing fake date: %v", err)
 	}
-	downloadFile = MockDownload()
+	DownloadFile = MockDownload()
 
 	tcs := []struct {
 		Config             *Config

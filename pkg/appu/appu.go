@@ -13,7 +13,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var downloadFile = func(URL, fileName string) error {
+// DownloadFile allows to download a URL content into a file.
+var DownloadFile = func(URL, fileName string) error {
 	file, err := os.Create(fileName)
 	if err != nil {
 		return err
@@ -78,7 +79,7 @@ func (c *Config) PrepareFiles() (err error) {
 	c.CoverFileName = extractFileNameFromURL(c.Cover)
 	c.ConfigFileName = "config.cfg"
 
-	err = downloadFile(c.Cover, c.CoverFileName)
+	err = DownloadFile(c.Cover, c.CoverFileName)
 	if err != nil {
 		return fmt.Errorf("error downloading cover file: %v", err)
 	}
