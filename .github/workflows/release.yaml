@@ -22,5 +22,5 @@ jobs:
         name: Build and publish Docker image
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u EDyO --password-stdin
-          docker build --pull --rm -f "Dockerfile" -t ghcr.io/edyo/appu:${{ steps.tag_name.outputs.SOURCE_TAG }} .
+          docker build --pull --rm -f "appu/Dockerfile" -t ghcr.io/edyo/appu:${{ steps.tag_name.outputs.SOURCE_TAG }} appu/.
           docker push ghcr.io/edyo/appu:${{ steps.tag_name.outputs.SOURCE_TAG }}

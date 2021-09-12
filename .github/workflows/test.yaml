@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v2
       - 
         name: Build Docker image
-        run: docker build --pull --rm -f "Dockerfile" -t appu .
+        run: docker build --pull --rm -f "appu/Dockerfile" -t appu appu/.
       - 
         name: Run tests in Docker container
         run: docker run --rm appu /bin/sh -c 'pip install -r dev-requirements.txt; python -m pytest'
