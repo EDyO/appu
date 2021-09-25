@@ -48,10 +48,14 @@ jobs:
         name: Build 
         run: |
           scripts/build.sh ${{ matrix.destination_os }} amd64
+      -
+        name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
       - 
         name: Release built binaries
         uses: AButler/upload-release-assets@v2.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           files: build/*
-          release-tag: ${{ github.ref }}
+          release-tag: ${{ steps.get_version.outputs.VERSION }}
