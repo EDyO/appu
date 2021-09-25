@@ -27,6 +27,7 @@ type Config struct {
 	Title          string    `yaml:"title"`
 	TrackNo        int       `yaml:"trackNo"`
 	EpisodeURL     string    `yaml:"episodeURL"`
+	DistributionID string    `yaml:"distributionID"`
 	ConfigFileName string
 }
 
