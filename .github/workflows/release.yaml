@@ -54,3 +54,4 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           files: build/*
+          release-tag: ${{ github.ref }}
