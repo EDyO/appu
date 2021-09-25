@@ -197,42 +197,42 @@ jobs:
         name: Check license file is present
         run: |
           find . -name LICENSE.md
- release:
-    needs:
-      - docker
-      - pytest
-      - test
-      - check-formatting
-      - check-smells
-      - check-complexity
-      - check-style
-      - check-ineffectual-assignments
-      - check-spelling
-      - staticcheck
-      - check-license
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        destination_os: [linux, windows, darwin]
-    steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v2
-      -
-        name: Install Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: '^1.16'
-      -
-        name: Build 
-        run: |
-          scripts/build.sh ${{ matrix.destination_os }} amd64
-      - 
-        name: Release built binaries
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/*
-          tag: ${{ github.ref }}
-          overwrite: true
-          file_glob: true
+  release:
+     needs:
+       - docker
+       - pytest
+       - test
+       - check-formatting
+       - check-smells
+       - check-complexity
+       - check-style
+       - check-ineffectual-assignments
+       - check-spelling
+       - staticcheck
+       - check-license
+     runs-on: ubuntu-latest
+     strategy:
+       matrix:
+         destination_os: [linux, windows, darwin]
+     steps:
+       -
+         name: Checkout
+         uses: actions/checkout@v2
+       -
+         name: Install Go
+         uses: actions/setup-go@v2
+         with:
+           go-version: '^1.16'
+       -
+         name: Build 
+         run: |
+           scripts/build.sh ${{ matrix.destination_os }} amd64
+       - 
+         name: Release built binaries
+         uses: svenstaro/upload-release-action@v2
+         with:
+           repo_token: ${{ secrets.GITHUB_TOKEN }}
+           file: build/*
+           tag: ${{ github.ref }}
+           overwrite: true
+           file_glob: true
