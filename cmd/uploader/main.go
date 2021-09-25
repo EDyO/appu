@@ -11,7 +11,6 @@ import (
 
 func main() {
 	uploadFileName := os.Args[1]
-	distribution := os.Args[4]
 	destinationKey := os.Args[2]
 	YAMLFileName := os.Args[3]
 
@@ -30,7 +29,7 @@ func main() {
 	}
 
 	pattern := fmt.Sprintf("/%s", destinationKey)
-	if err := aws.CreateInvalidationRequest(session, distribution, pattern); err != nil {
+	if err := aws.CreateInvalidationRequest(session, cfg.DistributionID, pattern); err != nil {
 		log.Fatal(err)
 		return
 	}
