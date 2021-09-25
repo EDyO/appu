@@ -1,0 +1,27 @@
+feedURL: http://my.podcast.com/podcast/feed.xml
+masterURLPattern: https://my.podcast.com/masters/<FILE>
+publishURL: https://my.podcast.com/podcast
+distributionID: XXXXXXXXX
+directFields:
+  introURL: https://my.podcast.com/media/intro.mp3
+  cover: https://my.podcast.com/media/cover.png
+  artist: Me
+  album: My Podcast
+  episodeBucket: mypodcast-episodes
+scriptFieldHooks:
+- name: title
+  hook: /html/body/p/span[contains(@style,"font-size:24pt;")]
+  list: false
+- name: summary
+  hook: /html/body/p[contains(@style,"color:#666666;")]
+  list: false
+- name: image
+  hook: /html/body/p/span/img
+  list: false
+  attribute: src
+- name: links
+  hook: /html/body/ul[last()]/li
+  list: true
+episodeScriptHooks:
+  default: "Podcast"
+  collaboration: "Collaboration"
