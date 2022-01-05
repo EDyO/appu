@@ -40,7 +40,11 @@ func CreateFeedItem(cfg *Config) (*etree.Element, error) {
 	newEpisodeTag.AddChild(guid)
 
 	description := etree.NewElement("description")
-	description.CreateText(cfg.Summary)
+	descriptionText := cfg.Summary + "\n"
+	for _, link := range cfg.Links {
+		descriptionText += link + "\n"
+	}
+	description.CreateText(descriptionText)
 	newEpisodeTag.AddChild(description)
 
 	pubDate := etree.NewElement("pubDate")
