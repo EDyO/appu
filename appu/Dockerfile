@@ -1,5 +1,10 @@
 FROM python:3.7-alpine
 
+VOLUME /home/appu/.aws
+VOLUME /home/appu/cfg
+VOLUME /home/appu/files
+VOLUME /home/appu/podcast
+
 RUN apk --update add \
         ffmpeg \
     && rm -rf /var/lib/apt/lists/* \
@@ -12,10 +17,8 @@ USER appu
 
 COPY --chown=appu:appu . /home/appu
 
-RUN mkdir -p /home/appu/files /home/appu/podcast
-
 RUN cd /home/appu/ \
-    && pip install -r requirements.txt
+    && pip install --user -r requirements.txt
 
 WORKDIR /home/appu
 
