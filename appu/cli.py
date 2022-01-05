@@ -17,7 +17,7 @@ def get_logger():
 def parse_config():
     """Read config file and loads parameters as variables"""
     configParser = configparser.RawConfigParser()
-    configFilePath = r'./config.cfg'
+    configFilePath = r'./cfg/config.cfg'
     configParser.read(configFilePath)
     cfg = {}
     for section in configParser.sections():

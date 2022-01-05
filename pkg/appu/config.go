@@ -49,9 +49,9 @@ func LoadConfigYAML(YAMLFile string) (cfg *Config, err error) {
 // PrepareFiles makes all the configuration ready to be used by the appu container.
 func (c *Config) PrepareFiles() (err error) {
 	c.CoverFileName = extractFileNameFromURL(c.Cover)
-	c.ConfigFileName = "config.cfg"
+	c.ConfigFileName = "data/cfg/config.cfg"
 
-	err = DownloadFile(c.Cover, c.CoverFileName)
+	err = DownloadFile(c.Cover, fmt.Sprintf("data/files/%s", c.CoverFileName))
 	if err != nil {
 		return fmt.Errorf("error downloading cover file: %v", err)
 	}

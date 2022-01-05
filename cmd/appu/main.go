@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -15,11 +16,32 @@ func main() {
 
 	YAMLFileName := os.Args[1]
 	DockerImage := os.Args[2]
-	AWSCredentialsFileName := os.Args[3]
+	AWSCredentials := os.Args[3]
 
 	cfg, err := appu.LoadConfigYAML(YAMLFileName)
 	if err != nil {
 		log.Fatalf("Error loading config file: %v", err)
+	}
+
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	volumes := map[string]string{
+		fmt.Sprintf("%s/data/aws", cwd):     "/home/appu/.aws",
+		fmt.Sprintf("%s/data/cfg", cwd):     "/home/appu/cfg",
+		fmt.Sprintf("%s/data/files", cwd):   "/home/appu/files",
+		fmt.Sprintf("%s/data/podcast", cwd): "/home/appu/podcast",
+	}
+
+	if err := os.Mkdir(fmt.Sprintf("%s/data", cwd), 0755); err != nil {
+		log.Fatal(err)
+	}
+	for directory := range volumes {
+		if err := os.Mkdir(directory, 0755); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	err = cfg.PrepareFiles()
@@ -27,14 +49,18 @@ func main() {
 		log.Fatalf("Config error: %v", err)
 	}
 
-	cwd, err := os.Getwd()
+	input, err := ioutil.ReadFile(AWSCredentials)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		return
 	}
-	volumes := map[string]string{
-		AWSCredentialsFileName:                        "/home/appu/.aws/credentials",
-		fmt.Sprintf("%s/%s", cwd, cfg.ConfigFileName): "/home/appu/config.cfg",
-		fmt.Sprintf("%s/%s", cwd, cfg.CoverFileName):  fmt.Sprintf("/home/appu/files/%s", cfg.CoverFileName),
+
+	destinationFile := fmt.Sprintf("%s/data/aws/credentials", cwd)
+	err = ioutil.WriteFile(destinationFile, input, 0644)
+	if err != nil {
+		fmt.Println("Error creating", destinationFile)
+		fmt.Println(err)
+		return
 	}
 
 	out, err := docker.RunAppuContainer(DockerImage, volumes)
@@ -43,4 +69,8 @@ func main() {
 	}
 
 	stdcopy.StdCopy(os.Stdout, os.Stderr, out)
+
+	if err := os.RemoveAll(fmt.Sprintf("%s/data", cwd)); err != nil {
+		log.Fatal(err)
+	}
 }
