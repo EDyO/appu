@@ -40,7 +40,7 @@ func TestGetEpisodeDetails(t *testing.T) {
 		{
 			"mypodcast-1.master.mp3",
 			"Podcast 1",
-			"../../podcast.yaml",
+			"../../podcast.yaml.sample",
 			`<html><body>
 			<p><span style="font-size:24pt;">Podcast 1 - My Podcast</span></p>
 			<p><span><img src="https://my.podcast.com/images/image.png"/></span></p>
@@ -73,7 +73,7 @@ func TestGetEpisodeDetails(t *testing.T) {
 		{
 			"mypodcast-collaboration1.master.mp3",
 			"Collaboration 1",
-			"../../podcast.yaml",
+			"../../podcast.yaml.sample",
 			`<html><body>
 			<p><span style="font-size:24pt;">Collaboration 1 - My friend's episode</span></p>
 			<p style="color:#666666;">In this collaboration, I'm hosting my friend's episode.</p>
