@@ -54,10 +54,5 @@ jobs:
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
       - 
         name: Release built binaries
-        uses: xresloader/upload-to-github-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          file: build/*
-          tags: true
-          draft: false
+        run: |
+          gh release upload ${{ github.event.release.upload_url }} build/*
