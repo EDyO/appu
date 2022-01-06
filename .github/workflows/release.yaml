@@ -54,8 +54,10 @@ jobs:
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
       - 
         name: Release built binaries
-        uses: AButler/upload-release-assets@v2.0
+        uses: xresloader/upload-to-github-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          files: build/*
-          release-tag: ${{ steps.get_version.outputs.VERSION }}
+          file: build/*
+          tags: true
+          draft: false
