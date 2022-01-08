@@ -1,10 +1,10 @@
 # appu
 
-Appu is a toolkit for podcast edition and publishing.
+**A**utomatic **P**odcast **PU**blisher, aka appu, is a toolkit for podcast edition and publishing.
 
 ## Rationale
 
-While running the [Entre Dev Y Ops podcast](https://www.entredevyops.es), the authors found interesting to start building a set of tools to make this easier. We hope this might help anyone else.
+While running the [Entre Dev y Ops podcast](https://www.entredevyops.es), the authors found interesting to start building a set of tools to make this easier. We hope this might help anyone else.
 
 Currently we start preparing every episode by writing a simple script we store in a shared Drive folder.
 
@@ -20,9 +20,8 @@ Finally, using the tools here, and our own podcast configuration file, we have m
 
 You'll need the following:
 - Docker, for Windows and Mac, you should use Docker Desktop.
-- Publishing infrastructure based on an online storage, and a CDN with invalidation features.
-  Currently only AWS S3 and CloudFront are supported.
-  You'll need credentials for uploading the episodes' audio files and the RSS feed and then invalidating them on the CDN.
+- Publishing infrastructure based on an online storage, and a CDN with invalidation features (currently only AWS S3 and CloudFront are supported.)
+- Valid credentials for uploading the episodes' audio files and the RSS feed and then invalidating them on the CDN.
 
 We recommend to use some secure online storage for your podcast configuration and specific details.
 It's also interesting for sharing the publishing process within teams.
@@ -58,16 +57,13 @@ docker build -t ghcr.io/edyo/appu:local appu/.
 #### Download and update the feed
 
 ```
-./feedupdater http://my.podcast.com/podcast/feed.xml mypodcast-XX.yaml
+./feedupdater http://my.podcast.com/podcast/feed.xml mypodcast-XX.yaml > new_feed.xml
 ```
-
-Open the original feed downloaded, `feed.xml` in this case, to avoid editing all entries, and add the last `item` element from the `new_feed.xml`.
-Then replace the new lines in the `description` tag's text for the last `item` with the corresponding HTML entity, i.e. `&#xA;`.
 
 #### Upload the new feed
 
 ```
-./uploader feed.xml feed.xml mypodcast-XX.yaml
+./uploader new_feed.xml feed.xml mypodcast-XX.yaml
 ```
 
 First argument is the name of the XML file with the new episode entry. The second argument is the bucket key to upload the file to. The Third argument is the episode configuration file.

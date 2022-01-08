@@ -24,21 +24,15 @@ func main() {
 		log.Fatalf("Error downloading feed %s: %v", feedURL, err)
 	}
 
-	doc, err := appu.ReadXML(feedFileName)
+	feed, err := appu.ReadXML(feedFileName)
 	if err != nil {
 		log.Fatalf("Error parsing feed: %v", err)
 	}
 
-	channel := doc.FindElement("./rss/channel")
-	if channel != nil {
-		newEpisodeTag, err := appu.CreateFeedItem(cfg)
-		if err != nil {
-			log.Fatalf("Error creating new episode tag: %v", err)
-		}
-		channel.AddChild(newEpisodeTag)
-	} else {
-		log.Fatalf("Error: could not find channel tagin feed XML")
+	err = appu.AddNewEpisode(cfg, feed)
+	if err != nil {
+		log.Fatalf("Error adding new episode: %v", err)
 	}
 
-	appu.WriteXML(doc)
+	appu.WriteXML(feed)
 }
