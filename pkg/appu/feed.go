@@ -2,20 +2,96 @@ package appu
 
 import (
 	"fmt"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/beevik/etree"
+	"github.com/eduncan911/podcast"
+	"github.com/mmcdole/gofeed"
 )
 
-// ReadXML loads XML from a file into an `etree.Document` for processing.
-func ReadXML(feedFileName string) (*etree.Document, error) {
-	doc := etree.NewDocument()
-	err := doc.ReadFromFile(feedFileName)
+// AddNewEpisode creates a new episode from `cfg` and adds it to `feed`.
+func AddNewEpisode(cfg *Config, feed *podcast.Podcast) error {
+	description := cfg.Summary + "\n"
+	for _, link := range cfg.Links {
+		description += link + "\n"
+	}
+	newItem := podcast.Item{
+		Title:       cfg.Title,
+		Description: description,
+		PubDate:     &cfg.PubDate,
+	}
+	length, err := GetEpisodeLength(cfg.EpisodeURL)
+	if err != nil {
+		return err
+	}
+	newItem.AddEnclosure(cfg.EpisodeURL, podcast.MP3, int64(length))
+
+	if _, err := feed.AddItem(newItem); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ReadXML loads XML from a file into a `podcast.Podcast` for processing.
+func ReadXML(feedFileName string) (*podcast.Podcast, error) {
+	file, err := os.Open(feedFileName)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	fp := gofeed.NewParser()
+	feed, err := fp.Parse(file)
 	if err != nil {
 		return nil, err
 	}
 
-	return doc, err
+	p := podcast.New(
+		feed.Title,
+		feed.Link,
+		feed.Description,
+		feed.PublishedParsed,
+		feed.UpdatedParsed,
+	)
+
+	p.AddAtomLink(feed.Link)
+	p.ISubtitle = feed.ITunesExt.Subtitle
+	p.AddAuthor(feed.ITunesExt.Author, feed.ITunesExt.Owner.Email)
+	p.AddImage(feed.ITunesExt.Image)
+	p.AddSummary(feed.ITunesExt.Summary)
+	for _, category := range feed.ITunesExt.Categories {
+		p.AddCategory(category.Text, nil)
+	}
+	p.IOwner = &podcast.Author{
+		Name:  feed.ITunesExt.Owner.Name,
+		Email: feed.ITunesExt.Owner.Email,
+	}
+	p.IExplicit = feed.ITunesExt.Explicit
+	p.Language = feed.Language
+	p.Copyright = feed.Copyright
+
+	for _, item := range feed.Items {
+		podcastItem := podcast.Item{
+			Title:       item.Title,
+			Description: item.Description,
+			PubDate:     item.PublishedParsed,
+		}
+		for _, itemEnclosure := range item.Enclosures {
+			length, err := strconv.ParseInt(itemEnclosure.Length, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			podcastItem.AddEnclosure(itemEnclosure.URL, podcast.MP3, length)
+		}
+		if _, err := p.AddItem(podcastItem); err != nil {
+			return nil, err
+		}
+	}
+
+	return &p, nil
 }
 
 // CreateFeedItem creates a new feed's Item from the Config information.
@@ -62,7 +138,10 @@ func CreateFeedItem(cfg *Config) (*etree.Element, error) {
 }
 
 // WriteXML creates a new file on disk with the appropriate XML contents from `doc`.
-func WriteXML(doc *etree.Document) {
-	doc.Indent(2)
-	doc.WriteToFile("new_feed.xml")
+func WriteXML(p *podcast.Podcast) {
+
+	// Podcast.Encode writes to an io.Writer
+	if err := p.Encode(os.Stdout); err != nil {
+		fmt.Println("error writing to stdout:", err.Error())
+	}
 }

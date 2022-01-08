@@ -15,8 +15,10 @@ require (
 	github.com/antchfx/xpath v1.2.0
 	github.com/containerd/containerd v1.5.5 // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
+	github.com/eduncan911/podcast v1.4.2
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/ifosch/stationery v0.1.2
+	github.com/mmcdole/gofeed v1.1.3
 	github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
@@ -27,6 +29,8 @@ require (
 require (
 	cloud.google.com/go v0.93.3 // indirect
 	github.com/Microsoft/go-winio v0.4.17 // indirect
+	github.com/PuerkitoBio/goquery v1.5.1 // indirect
+	github.com/andybalholm/cascadia v1.1.0 // indirect
 	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/go-ini/ini v1.25.4 // indirect
@@ -35,6 +39,10 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20160803190731-bd40a432e4c7 // indirect
+	github.com/json-iterator/go v1.1.10 // indirect
+	github.com/mmcdole/goxpp v0.0.0-20181012175147-0068e33feabf // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
