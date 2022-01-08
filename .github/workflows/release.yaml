@@ -54,8 +54,6 @@ jobs:
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
       - 
         name: Release built binaries
-        uses: AButler/upload-release-assets@v2.0
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          files: build/*
-          release-tag: ${{ steps.get_version.outputs.VERSION }}
+        run: |
+          echo ${{ secrets.TEST_TOKEN }} | gh auth login --with-token 
+          gh release upload ${{ steps.get_version.outputs.VERSION }} build/*
