@@ -33,37 +33,72 @@ HTTP/HTTPS and S3 sources are currently supported.
 
 The following are some environment variables you'll need to specify to have this running.
 
+*unix
 ```
 export PODCAST_YAML=/path/to/your/podcast.yaml
 export DRIVE_CREDENTIALS_FILE=/path/to/your/drive_credentials.json
 export AWS_PROFILE=appu
 ```
 
+Windows (CMD)
+```
+set PODCAST_YAML=\path\to\your\podcast.yaml
+set DRIVE_CREDENTIALS_FILE=\path\to\your\drive_credentials.json
+set AWS_PROFILE=appu
+```
+
 #### Collect data for episode
 
 The following command creates the episode configuration file, with the publishing details for this episode calculated.
 
+*unix
 ```
 ./epidator mypodcast-XX.master.mp3 > mypodcast-XX.yaml
 ```
 
+Windows (CDM)
+```
+epidator mypodcast-XX.master.mp3 > mypodcast-XX.yaml
+```
 #### Edit and upload the audio file
 
+*unix
 ```
 docker build -t ghcr.io/edyo/appu:local appu/.
 ./appu mypodcast-XX.yaml ghcr.io/edyo/appu:local /keybase/team/edyo/appu.credentials
 ```
 
+Windows (CMD)
+```
+set PAT=[YOUR-GITHUB-TOKEN]
+echo %PAT% | docker login ghcr.io  -u [USERNAME] --password-stdin
+appu mypodcast-XX.yaml ghcr.io/edyo/appu:v0.0.1 %AWS_SHARED_CREDENTIALS_FILE%
+```
+
+
 #### Download and update the feed
 
+*unix
 ```
 ./feedupdater http://my.podcast.com/podcast/feed.xml mypodcast-XX.yaml > new_feed.xml
 ```
 
+Windows (CMD)
+```
+feedupdater "http://my.podcast.com/podcast/feed.xml" mypodcast-XX.yaml > new_feed.xml
+```
+
+
 #### Upload the new feed
 
+*unix
 ```
 ./uploader new_feed.xml feed.xml mypodcast-XX.yaml
+```
+
+Windows (CMD)
+```
+uploader new_feed.xml feed.xml mypodcast-XX.yaml
 ```
 
 First argument is the name of the XML file with the new episode entry. The second argument is the bucket key to upload the file to. The Third argument is the episode configuration file.
