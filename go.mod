@@ -3,7 +3,7 @@ module github.com/EDyO/appu
 go 1.17
 
 require (
-	github.com/aws/aws-sdk-go v1.15.11
+	github.com/aws/aws-sdk-go v1.33.0
 	github.com/beevik/etree v1.1.0
 	github.com/docker/docker v20.10.8+incompatible
 	gopkg.in/ini.v1 v1.63.0
@@ -33,12 +33,11 @@ require (
 	github.com/andybalholm/cascadia v1.1.0 // indirect
 	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/docker/go-units v0.4.0 // indirect
-	github.com/go-ini/ini v1.25.4 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
-	github.com/jmespath/go-jmespath v0.0.0-20160803190731-bd40a432e4c7 // indirect
+	github.com/jmespath/go-jmespath v0.3.0 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/mmcdole/goxpp v0.0.0-20181012175147-0068e33feabf // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
