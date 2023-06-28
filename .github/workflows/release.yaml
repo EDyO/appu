@@ -1,25 +1,20 @@
 on:
   push:
     tags:
-      - '*'
-
+      - "*"
 permissions:
   packages: write
-
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      -
-        name: Get tag name
+      - name: Get tag name
         id: tag_name
         run: |
           echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
-      - 
-        name: Build and publish Docker image
+      - name: Build and publish Docker image
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u EDyO --password-stdin
           docker build --pull --rm -f "appu/Dockerfile" -t ghcr.io/edyo/appu:${{ steps.tag_name.outputs.SOURCE_TAG }} appu/.
@@ -32,28 +27,20 @@ jobs:
       matrix:
         destination_os: [linux, windows, darwin]
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      -
-        name: Install Go
+      - name: Install Go
         uses: actions/setup-go@v2
         with:
-          go-version: '^1.16'
-      -
-        name: Tidy dependencies to local
-        run : |
+          go-version: "^1.16"
+      - name: Tidy dependencies to local
+        run: |
           go mod tidy
-      -
-        name: Build 
+      - name: Build
         run: |
           scripts/build.sh ${{ matrix.destination_os }} amd64
-      -
-        name: Get the version
+      - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
-      - 
-        name: Release built binaries
-        run: |
-          echo ${{ secrets.TEST_TOKEN }} | gh auth login --with-token 
-          gh release upload ${{ steps.get_version.outputs.VERSION }} build/*
+      - name: Release built binaries
+        run: "echo ${{ secrets.TEST_TOKEN }} | gh auth login --with-token \ngh release upload ${{ steps.get_version.outputs.VERSION }} build/*"
