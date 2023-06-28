@@ -59,7 +59,7 @@ func ReadXML(cfg *Config, feedFileName string) (*podcast.Podcast, error) {
 
 	p.AddAtomLink(feed.Link)
 	p.ISubtitle = feed.ITunesExt.Subtitle
-	p.AddAuthor(feed.ITunesExt.Author, feed.ITunesExt.Owner.Email)
+	p.AddAuthor(feed.ITunesExt.Owner.Name, feed.ITunesExt.Owner.Email)
 	p.AddImage(feed.ITunesExt.Image)
 	p.AddSummary(feed.ITunesExt.Summary)
 	for _, category := range feed.ITunesExt.Categories {
