@@ -122,15 +122,10 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: "^1.16"
-      - name: Install staticcheck
-        run: |
-          go get -u honnef.co/go/tools/cmd/staticcheck@latest
-      - name: Download dependencies to local
-        run: |
-          go mod download
-      - name: Run staticcheck
-        run: |
-          staticcheck ./...
+      - name: Install and run staticcheck
+        uses: dominikh/staticcheck-action@v1.2.0
+        with:
+          version: "2022.1.1"
   check-license:
     runs-on: ubuntu-latest
     steps:
