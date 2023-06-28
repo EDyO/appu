@@ -36,7 +36,7 @@ func AddNewEpisode(cfg *Config, feed *podcast.Podcast) error {
 }
 
 // ReadXML loads XML from a file into a `podcast.Podcast` for processing.
-func ReadXML(feedFileName string) (*podcast.Podcast, error) {
+func ReadXML(cfg *Config, feedFileName string) (*podcast.Podcast, error) {
 	file, err := os.Open(feedFileName)
 	if err != nil {
 		return nil, err
@@ -53,8 +53,8 @@ func ReadXML(feedFileName string) (*podcast.Podcast, error) {
 		feed.Title,
 		feed.Link,
 		feed.Description,
-		feed.PublishedParsed,
-		feed.UpdatedParsed,
+		&cfg.PubDate,
+		&cfg.PubDate,
 	)
 
 	p.AddAtomLink(feed.Link)

@@ -24,7 +24,7 @@ func main() {
 		log.Fatalf("Error downloading feed %s: %v", feedURL, err)
 	}
 
-	feed, err := appu.ReadXML(feedFileName)
+	feed, err := appu.ReadXML(cfg, feedFileName)
 	if err != nil {
 		log.Fatalf("Error parsing feed: %v", err)
 	}
