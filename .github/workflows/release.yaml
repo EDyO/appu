@@ -13,7 +13,7 @@ jobs:
       - name: Get tag name
         id: tag_name
         run: |
-          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+          echo "name=SOURCE_TAG::${GITHUB_REF#refs/tags/}" >> ${GITHUB_OUTPUT}
       - name: Build and publish Docker image
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u EDyO --password-stdin
@@ -41,6 +41,7 @@ jobs:
           scripts/build.sh ${{ matrix.destination_os }} amd64
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+        run: echo "name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)" >> ${GITHUB_OUTPUT}
       - name: Release built binaries
         run: "echo ${{ secrets.TEST_TOKEN }} | gh auth login --with-token \ngh release upload ${{ steps.get_version.outputs.VERSION }} build/*"
+
