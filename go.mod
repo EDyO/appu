@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/aws/aws-sdk-go v1.15.11
 	github.com/beevik/etree v1.1.0
-	github.com/docker/docker v20.10.8+incompatible
+	github.com/docker/docker v20.10.24+incompatible
 	gopkg.in/ini.v1 v1.63.0
 	gopkg.in/yaml.v2 v2.4.0
 )
@@ -13,10 +13,8 @@ require (
 require (
 	github.com/antchfx/htmlquery v1.2.4
 	github.com/antchfx/xpath v1.2.0
-	github.com/containerd/containerd v1.5.5 // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/eduncan911/podcast v1.4.2
-	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/ifosch/stationery v0.1.2
 	github.com/mmcdole/gofeed v1.2.1
 	github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6 // indirect
@@ -40,6 +38,7 @@ require (
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20160803190731-bd40a432e4c7 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/kr/pretty v0.2.1 // indirect
 	github.com/mmcdole/goxpp v1.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
@@ -56,4 +55,6 @@ require (
 	google.golang.org/genproto v0.0.0-20210821163610-241b8fcbd6c8 // indirect
 	google.golang.org/grpc v1.40.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
+	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
+	gotest.tools/v3 v3.0.3 // indirect
 )
