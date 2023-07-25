@@ -1,5 +1,5 @@
 -i https://pypi.org/simple
-certifi==2020.4.5.1
+certifi==2023.7.22
 chardet==3.0.4
 idna==2.9
 pydub==0.24.0
