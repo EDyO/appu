@@ -10,15 +10,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Get tag name
-        id: tag_name
-        run: |
-          echo "name=SOURCE_TAG::${GITHUB_REF#refs/tags/}" >> ${GITHUB_OUTPUT}
       - name: Build and publish Docker image
         run: |
+          echo ${{ steps.vars.outputs.tag }}
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u EDyO --password-stdin
-          docker build --pull --rm -f "appu/Dockerfile" -t ghcr.io/edyo/appu:${{ steps.tag_name.outputs.SOURCE_TAG }} appu/.
-          docker push ghcr.io/edyo/appu:${{ steps.tag_name.outputs.SOURCE_TAG }}
+          docker build --pull --rm -f "appu/Dockerfile" -t ghcr.io/edyo/appu:${{ github.ref_name }} appu/.
+          docker push ghcr.io/edyo/appu:${{ github.ref_name }}
   release:
     needs:
       - docker
@@ -39,9 +36,8 @@ jobs:
       - name: Build
         run: |
           scripts/build.sh ${{ matrix.destination_os }} amd64
-      - name: Get the version
-        id: get_version
-        run: echo "name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)" >> ${GITHUB_OUTPUT}
       - name: Release built binaries
-        run: "echo ${{ secrets.TEST_TOKEN }} | gh auth login --with-token \ngh release upload ${{ steps.get_version.outputs.VERSION }} build/*"
-
+        run: |
+          echo ${{ secrets.TEST_TOKEN }} | gh auth login --with-token
+          gh release list | grep ${{ github.ref_name }} || gh release create ${{ github.ref_name }}
+          gh release upload ${{ github.ref_name }} build/*
