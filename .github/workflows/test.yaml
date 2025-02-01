@@ -26,7 +26,11 @@ jobs:
           go mod tidy
       - name: Run tests
         run: |
-          go test -v ./... -race -covermode=atomic
+          go test -v ./... -race -coverprofile=profile.cov
+      - name: Upload Coveralls
+        uses: shogo82148/actions-goveralls@v1
+        with:
+          path-to-profile: profile.cov
   check-formatting:
     runs-on: ubuntu-latest
     steps:
