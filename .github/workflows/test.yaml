@@ -1,5 +1,5 @@
 on:
-  pull_request:
+  #  pull_request: # Remove once we are not in refactor mode
   push:
     branches: [main]
 jobs:
