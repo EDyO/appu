@@ -27,3 +27,10 @@ def app_test() -> None:
     print(settings.debug)
     print("Hello World!")
     print(ROOT_PROJECT_PATH)
+    
+@app.command(name="validate-feed", help="Validate the feed")
+def app_validate_feed(
+        url: str = typer.Argument(..., help="URL of the feed to validate"),
+) -> None:
+    from .feed import validate_feed
+    validate_feed(url)
