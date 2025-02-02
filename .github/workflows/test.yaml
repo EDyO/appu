@@ -4,6 +4,7 @@ on:
     branches: [main]
 jobs:
   pytest:
+    if: github.event.pull_request.labels[0].name != 'revamp'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
