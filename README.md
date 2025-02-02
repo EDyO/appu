@@ -2,6 +2,32 @@
 
 **A**utomatic **P**odcast **PU**blisher, aka appu, is a toolkit for podcast edition and publishing.
 
+## Newer APPU 2 version
+
+This is the new version of appu, it's a work in progress.
+
+### Pre-requisites
+
+- Make sure you have `uv` [installed in your system](https://docs.astral.sh/uv/getting-started/installation/).
+Use your favorite package manager to install it.
+
+#### Automation of `venv` management (optional)
+
+You can use `mise` to transparently manage your venvs. Installation instructions are [here](https://mise.jdx.dev).
+With `mise` installed, you just need to trust the source directory, by running `mise trust` from within the cloned repository.
+
+### Install deps
+
+Run `uv sync` to install the python dependencies.
+
+### Install pre-commit hook
+
+Run `uv run pre-commit install` to install the pre-commit hook. (The first time you commit, it will take some time.)
+
+### Run the app
+
+Run `uv run appu` to run the app, or if you have done the right thing before, you might just be able to run `appu` directly with no parameters.
+
 ## Rationale
 
 While running the [Entre Dev y Ops podcast](https://www.entredevyops.es), the authors found interesting to start building a set of tools to make this easier. We hope this might help anyone else.
