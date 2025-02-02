@@ -2,6 +2,32 @@
 
 **A**utomatic **P**odcast **PU**blisher, aka appu, is a toolkit for podcast edition and publishing.
 
+## Newer APPU 2 version
+
+This is the new version of appu, it's a work in progress.
+
+### Pre-requisites
+
+- Make sure you have `uv` [installed in your system](https://docs.astral.sh/uv/getting-started/installation/).
+Use your favorite package manager to install it.
+
+#### Automation of `venv` management (optional)
+
+You can use `mise` to transparently manage your venvs. Installation instructions are [here](https://mise.jdx.dev).
+With `mise` installed, you just need to trust the source directory, by running `mise trust` from within the cloned repository.
+
+### Install deps
+
+Run `uv sync` to install the python dependencies.
+
+### Install pre-commit hook
+
+Run `uv run pre-commit install` to install the pre-commit hook. (The first time you commit, it will take some time.)
+
+### Run the app
+
+Run `uv run appu` to run the app, or if you have done the right thing before, you might just be able to run `appu` directly with no parameters.
+
 ## Rationale
 
 While running the [Entre Dev y Ops podcast](https://www.entredevyops.es), the authors found interesting to start building a set of tools to make this easier. We hope this might help anyone else.
@@ -19,6 +45,7 @@ Finally, using the tools here, and our own podcast configuration file, we have m
 ### Requirements
 
 You'll need the following:
+
 - Docker, for Windows and Mac, you should use Docker Desktop.
 - Publishing infrastructure based on an online storage, and a CDN with invalidation features (currently only AWS S3 and CloudFront are supported.)
 - Valid credentials for uploading the episodes' audio files and the RSS feed and then invalidating them on the CDN.
@@ -33,7 +60,7 @@ HTTP/HTTPS and S3 sources are currently supported.
 
 The following are some environment variables you'll need to specify to have this running.
 
-```
+```bash
 export PODCAST_YAML=/path/to/your/podcast.yaml
 export DRIVE_CREDENTIALS_FILE=/path/to/your/drive_credentials.json
 export AWS_PROFILE=appu
@@ -43,26 +70,26 @@ export AWS_PROFILE=appu
 
 The following command creates the episode configuration file, with the publishing details for this episode calculated.
 
-```
+```bash
 ./epidator mypodcast-XX.master.mp3 > mypodcast-XX.yaml
 ```
 
 #### Edit and upload the audio file
 
-```
+```bash
 docker build -t ghcr.io/edyo/appu:local appu/.
 ./appu mypodcast-XX.yaml ghcr.io/edyo/appu:local /keybase/team/edyo/appu.credentials
 ```
 
 #### Download and update the feed
 
-```
+```bash
 ./feedupdater http://my.podcast.com/podcast/feed.xml mypodcast-XX.yaml > new_feed.xml
 ```
 
 #### Upload the new feed
 
-```
+```bash
 ./uploader new_feed.xml feed.xml mypodcast-XX.yaml
 ```
 
@@ -74,7 +101,7 @@ First argument is the name of the XML file with the new episode entry. The secon
 
 This converts a video file to an audio file.
 
-```
+```bash
 ffmpeg -i recording.mp4 mypodcast-XX.master.mp3
 ```
 
@@ -82,7 +109,7 @@ ffmpeg -i recording.mp4 mypodcast-XX.master.mp3
 
 This converts a two part video recording into a single audio file.
 
-```
+```bash
 ffmpeg -i first_recording.mp4 mypodcast-XX.1.master.mp3
 ffmpeg -i second_recording.mp4 mypodcast-XX.2.master.mp3 
 ffmpeg -i "concat:mypodcast-XX.1.master.mp3|mypodcast-XX.2.master.mp3" -acodec copy mypodcast-XX.master.mp3
@@ -90,7 +117,8 @@ ffmpeg -i "concat:mypodcast-XX.1.master.mp3|mypodcast-XX.2.master.mp3" -acodec c
 
 ## Roadmap
 
-So far we are planning for three versions for the toolkit: 
+So far we are planning for three versions for the toolkit:
+
 1. current, [v0.x](https://github.com/EDyO/appu/milestone/1),
 1. a more stable one, [v1.x](https://github.com/EDyO/appu/milestone/2),
 1. [v2.x](https://github.com/EDyO/appu/milestone/3) with more features.
