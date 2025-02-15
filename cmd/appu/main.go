@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -49,14 +48,14 @@ func main() {
 		log.Fatalf("Config error: %v", err)
 	}
 
-	input, err := ioutil.ReadFile(AWSCredentials)
+	input, err := os.ReadFile(AWSCredentials)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	destinationFile := fmt.Sprintf("%s/data/aws/credentials", cwd)
-	err = ioutil.WriteFile(destinationFile, input, 0644)
+	err = os.WriteFile(destinationFile, input, 0644)
 	if err != nil {
 		fmt.Println("Error creating", destinationFile)
 		fmt.Println(err)

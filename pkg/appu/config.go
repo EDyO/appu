@@ -2,7 +2,7 @@ package appu
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"time"
 
@@ -31,27 +31,40 @@ type Config struct {
 	ConfigFileName string
 }
 
-// LoadConfigYAML reads the `YAMLFile` and gets the data loaded in `cfg`, or any error happened in the process.
+// LoadConfigYAML reads the `YAMLFile` and gets the data loaded in
+// `cfg`, or any error happened in the process.
 func LoadConfigYAML(YAMLFile string) (cfg *Config, err error) {
-	yamlFile, err := ioutil.ReadFile(YAMLFile)
+	yamlFile, err := os.ReadFile(YAMLFile)
 	if err != nil {
-		return nil, fmt.Errorf("error loading %s: %v ", YAMLFile, err)
+		return nil, fmt.Errorf(
+			"error loading %s: %v ",
+			YAMLFile,
+			err,
+		)
 	}
 
 	err = yaml.Unmarshal(yamlFile, &cfg)
 	if err != nil {
-		return nil, fmt.Errorf("error unmarshaling %s: %v", YAMLFile, err)
+		return nil, fmt.Errorf(
+			"error unmarshaling %s: %v",
+			YAMLFile,
+			err,
+		)
 	}
 
 	return cfg, nil
 }
 
-// PrepareFiles makes all the configuration ready to be used by the appu container.
+// PrepareFiles makes all the configuration ready to be used by the
+// appu container.
 func (c *Config) PrepareFiles() (err error) {
 	c.CoverFileName = extractFileNameFromURL(c.Cover)
 	c.ConfigFileName = "data/cfg/config.cfg"
 
-	err = DownloadFile(c.Cover, fmt.Sprintf("data/files/%s", c.CoverFileName))
+	err = DownloadFile(
+		c.Cover,
+		fmt.Sprintf("data/files/%s", c.CoverFileName),
+	)
 	if err != nil {
 		return fmt.Errorf("error downloading cover file: %v", err)
 	}
@@ -63,22 +76,41 @@ func (c *Config) PrepareFiles() (err error) {
 
 func (c *Config) createConfigFile(configFileName string) {
 	cfgINI := ini.Empty()
-	cfgINI.Section("files-config").Key("podcast_file").SetValue(c.Master)
-	cfgINI.Section("files-config").Key("song_file").SetValue(c.Intro)
-	cfgINI.Section("files-config").Key("cover_file").SetValue(fmt.Sprintf("files/%s", c.CoverFileName))
-	cfgINI.Section("files-config").Key("final_file").SetValue(fmt.Sprintf("podcast/%s", c.episodeName()))
-	cfgINI.Section("files-config").Key("podcast_bucket").SetValue(c.Bucket)
-	cfgINI.Section("tag-config").Key("title").SetValue(c.Title)
-	cfgINI.Section("tag-config").Key("artist").SetValue(c.Artist)
-	cfgINI.Section("tag-config").Key("album").SetValue(c.Album)
-	cfgINI.Section("tag-config").Key("track").SetValue(fmt.Sprintf("%d", c.TrackNo))
-	cfgINI.Section("tag-config").Key("year").SetValue(fmt.Sprintf("%d", c.year()))
-	cfgINI.Section("tag-config").Key("comment").SetValue(c.Summary)
+	filesSection := cfgINI.Section("files-config")
+	filesSection.Key("podcast_file").SetValue(c.Master)
+	filesSection.Key("song_file").SetValue(c.Intro)
+	filesSection.Key("cover_file").SetValue(fmt.Sprintf(
+		"files/%s",
+		c.CoverFileName,
+	))
+	filesSection.Key("final_file").SetValue(fmt.Sprintf(
+		"podcast/%s",
+		c.episodeName(),
+	))
+	filesSection.Key("podcast_bucket").SetValue(c.Bucket)
+	tagSection := cfgINI.Section("tag-config")
+	tagSection.Key("title").SetValue(c.Title)
+	tagSection.Key("artist").SetValue(c.Artist)
+	tagSection.Key("album").SetValue(c.Album)
+	tagSection.Key("track").SetValue(fmt.Sprintf(
+		"%d",
+		c.TrackNo,
+	))
+	tagSection.Key("year").SetValue(fmt.Sprintf(
+		"%d",
+		c.year(),
+	))
+	tagSection.Key("comment").SetValue(c.Summary)
 	cfgINI.SaveTo(configFileName)
 }
 
 func (c *Config) episodeName() string {
-	return strings.Replace(extractFileNameFromURL(c.Master), ".master", "", 1)
+	return strings.Replace(
+		extractFileNameFromURL(c.Master),
+		".master",
+		"",
+		1,
+	)
 }
 
 func (c *Config) year() int {

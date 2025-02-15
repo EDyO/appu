@@ -29,7 +29,8 @@ var DownloadFile = func(URL, fileName string) error {
 	return nil
 }
 
-// GetEpisodeLength returns the Content-Length HTTP header value for a URL.
+// GetEpisodeLength returns the Content-Length HTTP header value for a
+// URL.
 var GetEpisodeLength = func(URL string) (int, error) {
 	res, err := http.Head(URL)
 	if err != nil {
@@ -41,5 +42,8 @@ var GetEpisodeLength = func(URL string) (int, error) {
 
 func extractFileNameFromURL(URL string) string {
 	URLPathParts := strings.Split(URL, "/")
-	return strings.Split(URLPathParts[len(URLPathParts)-1], "?")[0]
+	return strings.Split(
+		URLPathParts[len(URLPathParts)-1],
+		"?",
+	)[0]
 }

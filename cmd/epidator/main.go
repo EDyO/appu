@@ -28,7 +28,10 @@ func main() {
 		podcastYAML = "podcast.yaml"
 	}
 
-	details, err := appu.GetEpisodeDetails(trackName, podcastYAML)
+	details, err := appu.GetEpisodeDetails(
+		trackName,
+		podcastYAML,
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
