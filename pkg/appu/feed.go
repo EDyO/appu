@@ -59,7 +59,10 @@ func ReadXML(cfg *Config, feedFileName string) (*podcast.Podcast, error) {
 
 	p.AddAtomLink(feed.Link)
 	p.ISubtitle = feed.ITunesExt.Subtitle
-	p.AddAuthor(feed.ITunesExt.Owner.Name, feed.ITunesExt.Owner.Email)
+	p.AddAuthor(
+		feed.ITunesExt.Owner.Name,
+		feed.ITunesExt.Owner.Email,
+	)
 	p.AddImage(feed.ITunesExt.Image)
 	p.AddSummary(feed.ITunesExt.Summary)
 	for _, category := range feed.ITunesExt.Categories {
@@ -80,11 +83,19 @@ func ReadXML(cfg *Config, feedFileName string) (*podcast.Podcast, error) {
 			PubDate:     item.PublishedParsed,
 		}
 		for _, itemEnclosure := range item.Enclosures {
-			length, err := strconv.ParseInt(itemEnclosure.Length, 10, 64)
+			length, err := strconv.ParseInt(
+				itemEnclosure.Length,
+				10,
+				64,
+			)
 			if err != nil {
 				return nil, err
 			}
-			podcastItem.AddEnclosure(itemEnclosure.URL, podcast.MP3, length)
+			podcastItem.AddEnclosure(
+				itemEnclosure.URL,
+				podcast.MP3,
+				length,
+			)
 		}
 		if _, err := p.AddItem(podcastItem); err != nil {
 			return nil, err
@@ -137,11 +148,15 @@ func CreateFeedItem(cfg *Config) (*etree.Element, error) {
 	return newEpisodeTag, nil
 }
 
-// WriteXML creates a new file on disk with the appropriate XML contents from `doc`.
+// WriteXML creates a new file on disk with the appropriate XML
+// contents from `doc`.
 func WriteXML(p *podcast.Podcast) {
 
 	// Podcast.Encode writes to an io.Writer
 	if err := p.Encode(os.Stdout); err != nil {
-		fmt.Println("error writing to stdout:", err.Error())
+		fmt.Println(
+			"error writing to stdout:",
+			err.Error(),
+		)
 	}
 }
