@@ -38,12 +38,12 @@ var GetFeed = func(URL string) (string, error) {
 	return string(bodyBytes), nil
 }
 
-var noMatchingScripts = fmt.Errorf(
+var errNoMatchingScripts = fmt.Errorf(
 	"no matching scripts, please add a query returning one %s",
 	"single document",
 )
 
-var tooManyResults = func(r []*drive.File) (error) {
+var tooManyResults = func(r []*drive.File) error {
 	return fmt.Errorf(
 		"query returns too many documents (%v), %s",
 		len(r),
@@ -64,7 +64,7 @@ var GetScript = func(episodeTag string) (string, error) {
 	}
 
 	if len(q) == 0 {
-		return "", noMatchingScripts
+		return "", errNoMatchingScripts
 	}
 
 	r, err := stationery.GetFiles(svc, q)
@@ -106,7 +106,7 @@ type Podcast struct {
 		IntroURL      string `yaml:"introURL"`
 		EpisodeBucket string `yaml:"episodeBucket"`
 	} `yaml:"directFields"`
-	ScriptFieldHooks []ScriptFieldHook `yaml:"scriptFieldHooks"`
+	ScriptFieldHooks   []ScriptFieldHook `yaml:"scriptFieldHooks"`
 	EpisodeScriptHooks map[string]string `yaml:"episodeScriptHooks"`
 	trackName          string
 	scriptTree         *html.Node
@@ -248,7 +248,7 @@ func (p *Podcast) extractPropertiesFromScript() {
 func getSingleHookDetails(
 	hook ScriptFieldHook,
 	htmlNode *html.Node,
-) (interface{}) {
+) interface{} {
 	if hook.Attribute != "" {
 		return htmlquery.SelectAttr(
 			htmlNode,

@@ -41,17 +41,22 @@ export AWS_PROFILE=appu
 
 #### Collect data for episode
 
-The following command creates the episode configuration file, with the publishing details for this episode calculated.
+The following command creates the episode configuration file, with the publishing details for this episode calculated. The created file is named with the first part of the filename and in YAML format. In the example command, it would be named `mypodcast-XX.yaml`:
 
 ```
-./epidator mypodcast-XX.master.mp3 > mypodcast-XX.yaml
+./epidator mypodcast-XX.master.mp3
 ```
 
 #### Edit and upload the audio file
 
 ```
 docker build -t ghcr.io/edyo/appu:local appu/.
-./appu mypodcast-XX.yaml ghcr.io/edyo/appu:local /keybase/team/edyo/appu.credentials
+docker run --rm \
+	-v ${PWD}/data/cfg:/home/appu/cfg \
+	-v ${HOME}/.aws/credentials:/home/appu/.aws/credentials \
+	-v ${PWD}/data/files:/home/appu/files \
+	-v ${PWD}/data/podcast:/home/appu/podcast \
+	ghcr.io/edyo/appu:local
 ```
 
 #### Download and update the feed
