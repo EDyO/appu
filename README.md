@@ -19,6 +19,7 @@ Finally, using the tools here, and our own podcast configuration file, we have m
 ### Requirements
 
 You'll need the following:
+
 - Docker, for Windows and Mac, you should use Docker Desktop.
 - Publishing infrastructure based on an online storage, and a CDN with invalidation features (currently only AWS S3 and CloudFront are supported.)
 - Valid credentials for uploading the episodes' audio files and the RSS feed and then invalidating them on the CDN.
@@ -33,7 +34,7 @@ HTTP/HTTPS and S3 sources are currently supported.
 
 The following are some environment variables you'll need to specify to have this running.
 
-```
+```bash
 export PODCAST_YAML=/path/to/your/podcast.yaml
 export DRIVE_CREDENTIALS_FILE=/path/to/your/drive_credentials.json
 export AWS_PROFILE=appu
@@ -43,13 +44,14 @@ export AWS_PROFILE=appu
 
 The following command creates the episode configuration file, with the publishing details for this episode calculated. The created file is named with the first part of the filename and in YAML format. In the example command, it would be named `mypodcast-XX.yaml`:
 
-```
+
+```bash
 ./epidator mypodcast-XX.master.mp3
 ```
 
 #### Edit and upload the audio file
 
-```
+```bash
 docker build -t ghcr.io/edyo/appu:local appu/.
 docker run --rm \
 	-v ${PWD}/data/cfg:/home/appu/cfg \
@@ -61,13 +63,13 @@ docker run --rm \
 
 #### Download and update the feed
 
-```
+```bash
 ./feedupdater http://my.podcast.com/podcast/feed.xml mypodcast-XX.yaml > new_feed.xml
 ```
 
 #### Upload the new feed
 
-```
+```bash
 ./uploader new_feed.xml feed.xml mypodcast-XX.yaml
 ```
 
@@ -79,7 +81,7 @@ First argument is the name of the XML file with the new episode entry. The secon
 
 This converts a video file to an audio file.
 
-```
+```bash
 ffmpeg -i recording.mp4 mypodcast-XX.master.mp3
 ```
 
@@ -87,7 +89,7 @@ ffmpeg -i recording.mp4 mypodcast-XX.master.mp3
 
 This converts a two part video recording into a single audio file.
 
-```
+```bash
 ffmpeg -i first_recording.mp4 mypodcast-XX.1.master.mp3
 ffmpeg -i second_recording.mp4 mypodcast-XX.2.master.mp3 
 ffmpeg -i "concat:mypodcast-XX.1.master.mp3|mypodcast-XX.2.master.mp3" -acodec copy mypodcast-XX.master.mp3
@@ -95,7 +97,8 @@ ffmpeg -i "concat:mypodcast-XX.1.master.mp3|mypodcast-XX.2.master.mp3" -acodec c
 
 ## Roadmap
 
-So far we are planning for three versions for the toolkit: 
+So far we are planning for three versions for the toolkit:
+
 1. current, [v0.x](https://github.com/EDyO/appu/milestone/1),
 1. a more stable one, [v1.x](https://github.com/EDyO/appu/milestone/2),
 1. [v2.x](https://github.com/EDyO/appu/milestone/3) with more features.
