@@ -1,0 +1,4 @@
+[settings]
+
+[settings.python]
+uv_venv_auto = true
