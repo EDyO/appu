@@ -6,6 +6,7 @@ require (
 	github.com/aws/aws-sdk-go v1.15.11
 	github.com/beevik/etree v1.1.0
 	github.com/docker/docker v20.10.8+incompatible
+	google.golang.org/api v0.54.0
 	gopkg.in/ini.v1 v1.63.0
 	gopkg.in/yaml.v2 v2.4.0
 )
@@ -22,7 +23,7 @@ require (
 	github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
-	golang.org/x/net v0.4.0
+	golang.org/x/net v0.33.0
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 )
 
@@ -49,9 +50,8 @@ require (
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f // indirect
-	golang.org/x/sys v0.3.0 // indirect
-	golang.org/x/text v0.5.0 // indirect
-	google.golang.org/api v0.54.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20210821163610-241b8fcbd6c8 // indirect
 	google.golang.org/grpc v1.40.0 // indirect
