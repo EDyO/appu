@@ -22,7 +22,11 @@ appu = "appu2.cli:app"
 package = true
 
 [dependency-groups]
-dev = ["pre-commit>=4.1.0", "ruff>=0.9.4"]
+dev = [
+    "pre-commit>=4.1.0",
+    "pytest>=8.3.5",
+    "ruff>=0.9.4",
+]
 
 [tool.ruff]
 # Excludes the old appu python code from the linting
@@ -45,3 +49,9 @@ extend-select = [
 [tool.ruff.lint.isort]
 combine-as-imports = true
 lines-after-imports = 2
+
+[tool.ruff.lint.per-file-ignores]
+# Excludes some rules for test files
+"tests/**/*.py" = [
+  "S101", # allows asserts in tests
+]

@@ -1,12 +1,20 @@
 on:
   pull_request:
-    branches-ignore:
-      - revamp
   push:
     branches: [main]
 jobs:
+  test-appu2:
+    if: github.event_name == 'pull_request' && contains(github.head_ref, 'revamp')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build Appu2 Docker image
+        run: docker build --pull -t appu2 .
+      - name: Run tests in Docker container
+        run: docker run --rm -v ${PWD}/tests:/home/appu/tests appu2 uv run pytest tests
   pytest:
-    if: github.event_name == 'pull_request' && github.head_ref != 'revamp'
+    if: github.event_name == 'pull_request' && ! contains(github.head_ref, 'revamp')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -16,7 +24,7 @@ jobs:
       - name: Run tests in Docker container
         run: docker run --rm appu /bin/sh -c 'pip install -r dev-requirements.txt; python -m pytest'
   test:
-    if: github.event_name == 'pull_request' && github.head_ref != 'revamp'
+    if: github.event_name == 'pull_request' && ! contains(github.head_ref, 'revamp')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,7 +44,7 @@ jobs:
         with:
           path-to-profile: profile.cov
   check-formatting:
-    if: github.event_name == 'pull_request' && github.head_ref != 'revamp'
+    if: github.event_name == 'pull_request' && ! contains(github.head_ref, 'revamp')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -45,7 +53,7 @@ jobs:
         run: |
           gofmt -s -e -d -l . | tee /tmp/gofmt.output && [ $(cat /tmp/gofmt.output | wc -l) -eq 0 ]
   check-smells:
-    if: github.event_name == 'pull_request' && github.head_ref != 'revamp'
+    if: github.event_name == 'pull_request' && ! contains(github.head_ref, 'revamp')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -61,7 +69,7 @@ jobs:
         run: |
           go vet ./...
   check-complexity:
-    if: github.event_name == 'pull_request' && github.head_ref != 'revamp'
+    if: github.event_name == 'pull_request' && ! contains(github.head_ref, 'revamp')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -77,7 +85,7 @@ jobs:
         run: |
           gocyclo -over 15 .
   check-style:
-    if: github.event_name == 'pull_request' && github.head_ref != 'revamp'
+    if: github.event_name == 'pull_request' && ! contains(github.head_ref, 'revamp')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -93,7 +101,7 @@ jobs:
         run: |
           golint ./...
   check-ineffectual-assignments:
-    if: github.event_name == 'pull_request' && github.head_ref != 'revamp'
+    if: github.event_name == 'pull_request' && ! contains(github.head_ref, 'revamp')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -112,7 +120,7 @@ jobs:
         run: |
           ineffassign ./...
   check-spelling:
-    if: github.event_name == 'pull_request' && github.head_ref != 'revamp'
+    if: github.event_name == 'pull_request' && ! contains(github.head_ref, 'revamp')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -128,7 +136,7 @@ jobs:
         run: |
           misspell -error .
   staticcheck:
-    if: github.event_name == 'pull_request' && github.head_ref != 'revamp'
+    if: github.event_name == 'pull_request' && ! contains(github.head_ref, 'revamp')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
