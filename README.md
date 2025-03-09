@@ -8,8 +8,10 @@ This is the new version of appu, it's a work in progress.
 
 ### Pre-requisites
 
-- Make sure you have `uv` [installed in your system](https://docs.astral.sh/uv/getting-started/installation/).
-Use your favorite package manager to install it.
+Make sure you have installed in your system:
+
+- `ffmpeg` ([download](https://www.ffmpeg.org/download.html))
+- `uv` ([installation](https://docs.astral.sh/uv/getting-started/installation/))
 
 #### Automation of `venv` management (optional)
 
@@ -27,6 +29,32 @@ Run `uv run pre-commit install` to install the pre-commit hook. (The first time 
 ### Run the app
 
 Run `uv run appu` to run the app, or if you have done the right thing before, you might just be able to run `appu` directly with no parameters.
+
+#### Run the MP3 episode edition with appu2
+
+Considering you've run epidator the usual way, you can now run appu with `uv` and the episode.yaml file to get the old appu's feature:
+
+```bash
+uv run appu appu ~/mypodcast/episode.yaml
+```
+
+This is a sample of the output:
+
+```bash
+2025-03-09 03:59:18.438 | INFO     | appu2.logging:89 - Logging configured successfully
+2025-03-09 03:59:18.438 | INFO     | appu2.cli:37 - debug=False
+2025-03-09 03:59:18.438 | INFO     | appu2.cli:38 - Loading episode /home/user/mypodcast/episode.yaml config
+2025-03-09 03:59:18.457 | INFO     | logging:1736 - [botocore.credentials] Found credentials in shared credentials file: ~/.aws/credentials
+2025-03-09 03:59:18.548 | INFO     | appu2.remote:46 - Downloading s3://mypodcast-episodes-bucket/masters/episode.master.mp3 (Direct S3)
+2025-03-09 03:59:23.668 | INFO     | appu2.cli:41 - Normalizing master audio
+2025-03-09 03:59:29.027 | INFO     | appu2.remote:71 - Downloading https://my.podcast.com/intro.mp3?dl=0 (regular HTTP)
+2025-03-09 03:59:32.527 | INFO     | appu2.remote:71 - Downloading https://my.podcast.com/cover.png?dl=1 (regular HTTP)
+2025-03-09 03:59:34.378 | INFO     | appu2.cli:45 - Extract intro and outro
+2025-03-09 03:59:35.170 | INFO     | appu2.cli:47 - Concatenating intro, master audio, and outro
+2025-03-09 03:59:38.919 | INFO     | appu2.cli:49 - Exporting track
+2025-03-09 04:00:21.976 | INFO     | appu2.cli:60 - Uploading track
+2025-03-09 04:00:21.996 | INFO     | appu2.remote:18 - Uploading episode.mp3 to s3://mypodcast-episodes-bucket/podcast/episode.mp3
+```
 
 ## Rationale
 

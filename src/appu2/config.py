@@ -3,6 +3,7 @@ from pathlib import Path
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 __project_name__ = "appu"
 
 ROOT_PROJECT_PATH = Path(__file__).parent.parent.parent
