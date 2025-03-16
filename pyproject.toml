@@ -5,9 +5,13 @@ description = "Automatic Podcast PUblisher, aka appu, is a toolkit for podcast e
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "audioop-lts>=0.2.1",
+    "boto3>=1.37.9",
     "loguru>=0.7.3",
     "pydantic>=2.10.6",
     "pydantic-settings>=2.7.1",
+    "pydub>=0.25.1",
+    "requests>=2.32.3",
     "typer>=0.15.1",
 ]
 
@@ -18,7 +22,11 @@ appu = "appu2.cli:app"
 package = true
 
 [dependency-groups]
-dev = ["pre-commit>=4.1.0", "ruff>=0.9.4"]
+dev = [
+    "pre-commit>=4.1.0",
+    "pytest>=8.3.5",
+    "ruff>=0.9.4",
+]
 
 [tool.ruff]
 # Excludes the old appu python code from the linting
@@ -41,3 +49,9 @@ extend-select = [
 [tool.ruff.lint.isort]
 combine-as-imports = true
 lines-after-imports = 2
+
+[tool.ruff.lint.per-file-ignores]
+# Excludes some rules for test files
+"tests/**/*.py" = [
+  "S101", # allows asserts in tests
+]
