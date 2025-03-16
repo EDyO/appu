@@ -13,10 +13,34 @@ Make sure you have installed in your system:
 - `ffmpeg` ([download](https://www.ffmpeg.org/download.html))
 - `uv` ([installation](https://docs.astral.sh/uv/getting-started/installation/))
 
+Alternatively, you can use [APPU 2 on Docker](#use-docker-(optional)), so you'll need it.
+
 #### Automation of `venv` management (optional)
 
 You can use `mise` to transparently manage your venvs. Installation instructions are [here](https://mise.jdx.dev).
 With `mise` installed, you just need to trust the source directory, by running `mise trust` from within the cloned repository.
+
+#### Use Docker (optional)
+
+You can use Docker to run APPU 2 without changing your environment.
+
+To build the Docker image:
+
+```bash
+docker build -t appu2 .
+```
+
+To run APPU 2:
+
+```bash
+docker run --rm -v ${HOME}/mypodcast:/home/appu/mypodcast appu2 appu /home/appu/mypodcast/episode.yaml
+```
+
+To run APPU 2's tests:
+
+```bash
+docker run --rm -v ${PWD}/tests:/home/appu/tests appu2 uv run pytests /home/appu/tests
+```
 
 ### Install deps
 
@@ -25,6 +49,23 @@ Run `uv sync` to install the python dependencies.
 ### Install pre-commit hook
 
 Run `uv run pre-commit install` to install the pre-commit hook. (The first time you commit, it will take some time.)
+
+### Run the tests
+
+Run `uv run pytest tests` to run the tests for APPU 2, which should output something similar to the following:
+```
+============================= test session starts ==============================
+platform linux -- Python 3.13.2, pytest-8.3.5, pluggy-1.5.0
+rootdir: /home/appu
+configfile: pyproject.toml
+collected 7 items
+
+tests/audio_test.py ...                                                  [ 42%]
+tests/episode_test.py .                                                  [ 57%]
+tests/remote_test.py ...                                                 [100%]
+
+============================== 7 passed in 2.18s ===============================
+```
 
 ### Run the app
 
