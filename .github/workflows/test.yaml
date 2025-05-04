@@ -11,7 +11,7 @@ jobs:
       - name: Build Docker image
         run: docker build --pull --rm -f "appu/Dockerfile" -t appu appu/.
       - name: Run tests in Docker container
-        run: docker run --rm appu /bin/sh -c 'pip install -r dev-requirements.txt; python -m pytest'
+        run: docker run --rm appu /bin/sh -c 'pip install -r dev-requirements.txt; python -m pytest --cov profile.cov --cov-report; coveralls'
   test:
     runs-on: ubuntu-latest
     steps:
