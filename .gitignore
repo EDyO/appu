@@ -92,3 +92,24 @@ ENV/
 # Remote sync
 
 .remote-sync.json
+
+
+# macOS
+# General macOS Finder and resource-fork files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \\r
+Icon\r
+
+# Thumbnails, Spotlight, Trash and related
+.Spotlight-V100
+.Trashes
+.TemporaryItems
+.fseventsd/
+.DocumentRevisions-V100
+
+# Resource fork files (._*)
+._*
+
