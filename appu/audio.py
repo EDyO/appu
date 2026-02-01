@@ -1,10 +1,12 @@
 import re
 import logging
+import os
 import requests
 import boto3
 from botocore.exceptions import ClientError
 from pydub import AudioSegment
 from pydub.effects import normalize
+from pydub.silence import detect_silence
 
 def download_file(mp3_file_name, file_type):
     """
@@ -16,6 +18,7 @@ def download_file(mp3_file_name, file_type):
         headers={"User-Agent": "Wget/1.19.4 (linux-gnu)"})
     # Set different file name if is jingle or podcast file.
     result_file = "files/{}.mp3".format(file_type)
+    os.makedirs(os.path.dirname(result_file), exist_ok=True)
     with open(result_file, 'wb') as output:
         output.write(remotefile.content)
     return result_file
@@ -92,3 +95,42 @@ def normalize_audio(podcast_file):
     This function normalize track
     """
     return normalize(podcast_file, headroom=-1.5)
+
+
+def clamp_silence(audio, max_silence_ms=500, silence_thresh=None):
+    """
+    Limit stretches of silence to a maximum duration.
+    Any silent region longer than max_silence_ms is replaced
+    with exactly max_silence_ms of silence.
+    """
+    if max_silence_ms <= 0:
+        return audio
+
+    if silence_thresh is None:
+        silence_thresh = audio.dBFS - 16
+
+    silent_ranges = detect_silence(
+        audio,
+        min_silence_len=max_silence_ms + 1,
+        silence_thresh=silence_thresh,
+    )
+
+    if not silent_ranges:
+        return audio
+
+    output = AudioSegment.empty()
+    cursor = 0
+    for start, end in silent_ranges:
+        output += audio[cursor:start]
+        output += AudioSegment.silent(duration=max_silence_ms)
+        cursor = end
+
+    output += audio[cursor:]
+    return output
+
+
+def add_tail_silence(audio, duration_ms=2000):
+    """Append silence at the end of the track."""
+    if duration_ms <= 0:
+        return audio
+    return audio + AudioSegment.silent(duration=duration_ms)

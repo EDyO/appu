@@ -1,7 +1,15 @@
 import os
 import pytest
 from pydub import AudioSegment
-from audio import download_file, load_mp3, get_jingles, glue_tracks
+from pydub.generators import Sine
+from audio import (
+    download_file,
+    load_mp3,
+    get_jingles,
+    glue_tracks,
+    clamp_silence,
+    add_tail_silence,
+)
 
 
 class MockAudioSegment(object):
@@ -87,3 +95,16 @@ def test_glue_tracks(monkeypatch):
     second = MockAudioSegment.from_mp3("Anything else")
     final = glue_tracks([(first, 0), (second, 1000)])
     assert len(final) == 100000
+
+
+def test_clamp_silence_reduces_long_gaps():
+    tone = Sine(440).to_audio_segment(duration=100)
+    audio = tone + AudioSegment.silent(duration=1200) + tone
+    result = clamp_silence(audio, max_silence_ms=500, silence_thresh=-40)
+    assert abs(len(result) - 700) <= 1
+
+
+def test_add_tail_silence_appends_duration():
+    tone = Sine(440).to_audio_segment(duration=100)
+    result = add_tail_silence(tone, duration_ms=2000)
+    assert abs(len(result) - 2100) <= 1
