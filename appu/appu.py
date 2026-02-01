@@ -1,3 +1,4 @@
+import sys
 from cli import get_logger, parse_config
 from audio import (
     load_mp3,
@@ -52,5 +53,9 @@ final.export(
 
 logger.info("Done! File {} generated correctly".format(cfg['final_file']))
 
-if upload_file(cfg['final_file'], cfg['podcast_bucket']):
-    logger.info("Episode uploaded to {}".format(cfg['podcast_bucket']))
+# Skip upload when user requests no-upload or when podcast_bucket is empty
+if "--no-upload" in sys.argv or not cfg.get('podcast_bucket'):
+    logger.info("Skipping upload (no-upload flag or empty podcast_bucket).")
+else:
+    if upload_file(cfg['final_file'], cfg['podcast_bucket']):
+        logger.info("Episode uploaded to {}".format(cfg['podcast_bucket']))
