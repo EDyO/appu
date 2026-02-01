@@ -113,3 +113,7 @@ Icon\r
 # Resource fork files (._*)
 ._*
 
+# Ignore working copy of config file
+appu/config-test.cfg
+appu/cfg/config.cfg
+apput/cfg/

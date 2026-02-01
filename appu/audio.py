@@ -5,7 +5,7 @@ import requests
 import boto3
 from botocore.exceptions import ClientError
 from pydub import AudioSegment
-from pydub.effects import normalize
+from pydub.effects import normalize, compress_dynamic_range
 from pydub.silence import detect_silence
 
 def download_file(mp3_file_name, file_type):
@@ -94,24 +94,36 @@ def normalize_audio(podcast_file):
     """
     This function normalize track
     """
-    return normalize(podcast_file, headroom=-1.5)
+    # Normalize with a bit more headroom and apply gentle compression
+    normalized = normalize(podcast_file, headroom=-3.0)
+    return compress_dynamic_range(
+        normalized,
+        threshold=-18.0,   # start compressing just under loud speech peaks
+        ratio=3.0,
+        attack=5.0,
+        release=120.0,
+    )
 
 
-def clamp_silence(audio, max_silence_ms=500, silence_thresh=None):
+def clamp_silence(audio, max_silence_ms=900, edge_keep_ms=200, crossfade_ms=30, silence_thresh=None):
     """
     Limit stretches of silence to a maximum duration.
-    Any silent region longer than max_silence_ms is replaced
-    with exactly max_silence_ms of silence.
+    Any silent region longer than max_silence_ms is trimmed to that length,
+    preserving a small portion of the original edges and crossfading
+    the inserted silent chunk to avoid hard cuts.
     """
     if max_silence_ms <= 0:
         return audio
 
     if silence_thresh is None:
-        silence_thresh = audio.dBFS - 16
+        # Be less sensitive to low-volume speech; treat only very quiet parts as silence.
+        silence_thresh = max(audio.dBFS - 25, -65)
+
+    edge_keep_ms = min(edge_keep_ms, max_silence_ms // 2)
 
     silent_ranges = detect_silence(
         audio,
-        min_silence_len=max_silence_ms + 1,
+        min_silence_len=max_silence_ms + 200,
         silence_thresh=silence_thresh,
     )
 
@@ -121,15 +133,29 @@ def clamp_silence(audio, max_silence_ms=500, silence_thresh=None):
     output = AudioSegment.empty()
     cursor = 0
     for start, end in silent_ranges:
-        output += audio[cursor:start]
-        output += AudioSegment.silent(duration=max_silence_ms)
+        # preserve edges but keep total replaced silence equal to max_silence_ms
+        lead_keep = min(edge_keep_ms, max_silence_ms // 2, end - start)
+        trail_keep = min(edge_keep_ms, max_silence_ms - lead_keep, end - start - lead_keep)
+        middle_silence = max(max_silence_ms - lead_keep - trail_keep, 0)
+
+        lead_seg = audio[cursor:start + lead_keep]
+        trail_seg = audio[end - trail_keep:end]
+
+        fade_amt = min(crossfade_ms, len(lead_seg) // 2, len(trail_seg) // 2)
+        if fade_amt > 0:
+            lead_seg = lead_seg.fade_out(fade_amt)
+            trail_seg = trail_seg.fade_in(fade_amt)
+
+        output += lead_seg
+        output += AudioSegment.silent(duration=middle_silence)
+        output += trail_seg
         cursor = end
 
     output += audio[cursor:]
     return output
 
 
-def add_tail_silence(audio, duration_ms=2000):
+def add_tail_silence(audio, duration_ms=4000):
     """Append silence at the end of the track."""
     if duration_ms <= 0:
         return audio
