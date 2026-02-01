@@ -1,5 +1,12 @@
 from cli import get_logger, parse_config
-from audio import load_mp3, get_jingles, glue_tracks, normalize_audio
+from audio import (
+    load_mp3,
+    get_jingles,
+    glue_tracks,
+    normalize_audio,
+    clamp_silence,
+    add_tail_silence,
+)
 from publish import upload_file
 
 logger = get_logger()
@@ -17,6 +24,9 @@ mp3_tags = {
 logger.info("Importing podcast")
 podcast = load_mp3(cfg['podcast_file'], "podcast")
 
+logger.info("Clamping long silences")
+podcast = clamp_silence(podcast, max_silence_ms=500)
+
 logger.info("Generating jingles")
 opening, ending = get_jingles(cfg['song_file'])
 
@@ -25,6 +35,9 @@ podcast = normalize_audio(podcast)
 
 logger.info("Generating final podcast file: opening + podcast + ending")
 final = glue_tracks([(opening, 0), (podcast, 1000), (ending, 4000)])
+
+logger.info("Adding tail silence")
+final = add_tail_silence(final, duration_ms=2000)
 
 logger.info("Exporting final file")
 final.export(
