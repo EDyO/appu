@@ -116,4 +116,4 @@ Icon\r
 # Ignore working copy of config file
 appu/config-test.cfg
 appu/cfg/config.cfg
-apput/cfg/
+appu/cfg/

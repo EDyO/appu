@@ -37,8 +37,8 @@ podcast = normalize_audio(podcast)
 logger.info("Generating final podcast file: opening + podcast + ending")
 final = glue_tracks([
     (opening, 0),
-    (podcast, 800),  # fade un poco más largo para una entrada más suave
-    (ending, 500),   # fade-in/out suave del outro sin comerse el final
+    (podcast, 800),  # slightly longer fade for a smoother intro
+    (ending, 500),   # gentle fade for the outro without cutting the ending
 ])
 
 logger.info("Adding tail silence")
