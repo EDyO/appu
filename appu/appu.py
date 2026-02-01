@@ -26,7 +26,7 @@ logger.info("Importing podcast")
 podcast = load_mp3(cfg['podcast_file'], "podcast")
 
 logger.info("Clamping long silences")
-podcast = clamp_silence(podcast, max_silence_ms=500)
+podcast = clamp_silence(podcast)
 
 logger.info("Generating jingles")
 opening, ending = get_jingles(cfg['song_file'])
@@ -35,10 +35,14 @@ logger.info("Normalizing podcast audio")
 podcast = normalize_audio(podcast)
 
 logger.info("Generating final podcast file: opening + podcast + ending")
-final = glue_tracks([(opening, 0), (podcast, 1000), (ending, 4000)])
+final = glue_tracks([
+    (opening, 0),
+    (podcast, 800),  # fade un poco más largo para una entrada más suave
+    (ending, 500),   # fade-in/out suave del outro sin comerse el final
+])
 
 logger.info("Adding tail silence")
-final = add_tail_silence(final, duration_ms=2000)
+final = add_tail_silence(final)
 
 logger.info("Exporting final file")
 final.export(

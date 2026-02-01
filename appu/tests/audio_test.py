@@ -106,5 +106,5 @@ def test_clamp_silence_reduces_long_gaps():
 
 def test_add_tail_silence_appends_duration():
     tone = Sine(440).to_audio_segment(duration=100)
-    result = add_tail_silence(tone, duration_ms=2000)
-    assert abs(len(result) - 2100) <= 1
+    result = add_tail_silence(tone, duration_ms=4000)
+    assert abs(len(result) - 4100) <= 1
