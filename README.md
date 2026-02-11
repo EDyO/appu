@@ -1,5 +1,7 @@
 # appu
 
+[![Coverage Status](https://coveralls.io/repos/github/EDyO/appu/badge.svg)](https://coveralls.io/github/EDyO/appu)
+
 **A**utomatic **P**odcast **PU**blisher, aka appu, is a toolkit for podcast edition and publishing.
 
 ## Rationale
